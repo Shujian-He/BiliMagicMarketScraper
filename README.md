@@ -1,9 +1,9 @@
 
-# Bili Market Scraper
+# Bili Magic Market Scraper
 
 ## Overview
 
-**Bili Market Scraper** is a Python-based web scraping tool designed to extract product listings from the Bilibili market. It focuses on finding your favorite items based on specified criteria such as item name, price range, and discount rate. The scraped data is then sorted, stored in CSV files, and optionally inserted into an SQLite database for easy querying and analysis.
+**Bili Magic Market Scraper** is a Python-based web scraping tool designed to extract product listings from the Bilibili magic market. It focuses on finding your favorite items based on specified criteria such as item name, price range, and discount rate. The scraped data is then sorted, stored in CSV files, and optionally inserted into an SQLite database for easy querying and analysis.
 
 ## Features
 
