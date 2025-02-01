@@ -71,6 +71,7 @@ nextId = None
 
 # define start time for the loop
 startTime = int(time.time())
+print("startTime:", startTime)
 
 while True:
     payload = json.dumps({
@@ -88,7 +89,6 @@ while True:
     try:
         # sleep for 60s after 10min running
         currTime = int(time.time())
-        print("startTime:", startTime)
         print("currTime:", currTime)
         if currTime - startTime > 600:
             print("Start to sleep for 60s")
@@ -100,13 +100,24 @@ while True:
         
         # send request
         response = requests.request("POST", url, headers=headers, data=payload, timeout=10)
-        print(response.text)
-        response = response.json()
+        # print(response.text)
+        try:
+            response = response.json()
+        except Exception as e:
+            print("Error Decoding json:", e)
+            continue
+
+        while response["code"] != 0:
+            print("\nError occurred when getting data. Retrying...")
+            response = requests.request("POST", url, headers=headers, data=payload, timeout=10)
+            # print(response.text)
+            try:
+                response = response.json()
+            except Exception as e:
+                print("Error Decoding json:", e)
+                continue
 
         # update nextId
-        if response["code"] != 0:
-            print("\nError occurred when updating nextId.")
-            break
         nextId = response["data"]["nextId"]
         if nextId is None:
             print("\nEnd reached.")
@@ -122,7 +133,7 @@ while True:
             if item['totalItemsCount'] > 1:
                 continue
 
-            name = item["c2cItemsName"].strip() # avoid trailing linefeed
+            name = item["c2cItemsName"].replace("\n", " ").replace(",", " ").strip() # to avoid linefeed & comma
             id = item['c2cItemsId']
             price = item['price']
             marketPrice = item['detailDtoList'][0]['marketPrice']
@@ -136,12 +147,12 @@ while True:
                     with open(wantFile, "a") as file:
                         file.write(f"{timeNow},{name},{id},{price},{marketPrice},{rate}\n")
 
-        # 90% probability to sleep for 1s to 1.2s
+        # 90% probability to sleep for short time
         if random.random() < 0.9:
-            time.sleep(random.uniform(1, 1.2))
-        # 10% probability to sleep for 1.5s to 2s
+            time.sleep(random.uniform(1, 2))
+        # 10% probability to sleep for lone time
         else:
-            time.sleep(random.uniform(1.5, 2))
+            time.sleep(random.uniform(2, 3))
             
     except requests.exceptions.Timeout:
         print("\nThe request timed out")
