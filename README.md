@@ -64,7 +64,7 @@ python3 main.py -w <item_name> -p <price_range> -d <discount_range>
 ### Example:
 
 ```bash
-python main.py -w "初音未来" "孤独摇滚" -p 5000-15000 -d 10-50
+python3 main.py -w "初音未来" "孤独摇滚" -p 5000-15000 -d 10-50
 ```
 This will generate 2 files like `total_*.csv` and `want_*.csv`.
 
