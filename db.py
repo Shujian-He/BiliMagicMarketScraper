@@ -39,6 +39,7 @@ def read_and_save(totalFile, conn):
     with open(totalFile, "r") as file:
         reader = csv.reader(file)
         for row in reader:
+            # print(row)
             time, name, id_, price, market_price, rate = row
             
             # Insert data into the database

@@ -86,11 +86,11 @@ while True:
         'Cookie': load_cookie()
     }
     try:
-        # sleep for 60s after 1h running
+        # sleep for 60s after 10min running
         currTime = int(time.time())
         print("startTime:", startTime)
         print("currTime:", currTime)
-        if currTime - startTime > 3600:
+        if currTime - startTime > 600:
             print("Start to sleep for 60s")
             for i in range(0,60):
                 time.sleep(1)
@@ -104,7 +104,10 @@ while True:
         response = response.json()
 
         # update nextId
-        nextId = response.get("data", {}).get("nextId") # This will return None if "data" doesn’t exist.
+        if response["code"] != 0:
+            print("\nError occurred when updating nextId.")
+            break
+        nextId = response["data"]["nextId"]
         if nextId is None:
             print("\nEnd reached.")
             break
@@ -119,19 +122,19 @@ while True:
             if item['totalItemsCount'] > 1:
                 continue
 
-            name = item["c2cItemsName"]
+            name = item["c2cItemsName"].strip() # avoid trailing linefeed
             id = item['c2cItemsId']
             price = item['price']
             marketPrice = item['detailDtoList'][0]['marketPrice']
             rate = int(price) / int(marketPrice)
 
             with open(totalFile, "a") as file:
-                file.write(f"{timeNow}, {name}, {id}, {price}, {marketPrice}, {rate}\n")
+                file.write(f"{timeNow},{name},{id},{price},{marketPrice},{rate}\n")
 
             for wantName in wantList:
                 if wantName in name:
                     with open(wantFile, "a") as file:
-                        file.write(f"{timeNow}, {name}, {id}, {price}, {marketPrice}, {rate}\n")
+                        file.write(f"{timeNow},{name},{id},{price},{marketPrice},{rate}\n")
 
         # 90% probability to sleep for 1s to 1.2s
         if random.random() < 0.9:

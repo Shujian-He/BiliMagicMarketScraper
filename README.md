@@ -43,7 +43,7 @@
    - You can obtain your cookies from your browser’s developer tools:
       - Login to Bilibili, and open Bilibili market at https://mall.bilibili.com/neul-next/index.html?page=magic-market_index.
       - Press F12 to open developer tools, then locate to **Network** tab.
-      - Refresh the page (Press Ctrl+R on Windows or Command+R on macOS), and tap `Monitor` file on the left side.
+      - Refresh the page (Press Ctrl+R on Windows or Command+R on macOS), and tap `list` file on the left side.
       - Under *Headers* - *Request Headers*, copy everything after **Cookie:**.
 
 
