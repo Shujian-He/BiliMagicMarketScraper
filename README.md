@@ -28,7 +28,7 @@
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/Shujian-He/BiliMarketScraper.git
+   git clone https://github.com/Shujian-He/BiliMagicMarketScraper.git
    cd BiliMarketScraper
    ```
 
