@@ -41,10 +41,10 @@
    - This scraper requires authentication cookies from your Bilibili account to access the market API.
    - Open `cookies.txt` and replace the placeholder cookies with your own.
    - You can obtain your cookies from your browser’s developer tools:
-      - Login to Bilibili, and open Bilibili market at https://mall.bilibili.com/neul-next/index.html?page=magic-market_index.
+      - Login to Bilibili main site, then open Bilibili market at https://mall.bilibili.com/neul-next/index.html?page=magic-market_index.
       - Press F12 to open developer tools, then locate to **Network** tab.
       - Refresh the page (Press Ctrl+R on Windows or Command+R on macOS), and tap `list` file on the left side.
-      - Under *Headers* - *Request Headers*, copy everything after **Cookie:**.
+      - Navigate to *Headers* - *Request Headers*, copy everything after **Cookie:**.
 
 
 ## Usage
@@ -57,14 +57,14 @@ python3 main.py -w <item_name> -p <price_range> -d <discount_range>
 
 ### Arguments:
 
-- `-w, --want`: List of item names you want to track. *(Default: ["初音未来"])*
-- `-p, --price`: Price range in cents. *(Default: ["6000-10000"])*
-- `-d, --discount`: Discount percentage range. *(Default: ["0-100"])*
+- `-w, --want`: One or more item names you want to track. *(Default: 初音未来)*
+- `-p, --price`: Price range in cents. *(Default: 6000-10000)*
+- `-d, --discount`: Discount percentage range. *(Default: 0-100)*
 
 ### Example:
 
 ```bash
-python3 main.py -w "初音未来" "孤独摇滚" -p 5000-15000 -d 10-50
+python3 main.py -w 初音未来 孤独摇滚 -p 5000-15000 -d 10-50
 ```
 This will generate 2 files like `total_*.csv` and `want_*.csv`.
 
@@ -80,7 +80,15 @@ This will generate 2 sorted files like `sort_total_*.csv` and `sort_want_*.csv`.
 
 ## Database
 
-The data is automatically saved into an SQLite database (`bilidata.db`), which can be queried using tools like `DB Browser for SQLite` or via Python.
+After reaching the end of the items under current searching criteria, the data is automatically saved into an SQLite database (`bilidata.db`), which can be queried using tools like `DB Browser for SQLite` or via Python.
+
+- In case of main program error, run
+
+   ```
+   python3 db.py
+   ```
+
+   to manually save data in CSV files into the database.
 
 ## License
 

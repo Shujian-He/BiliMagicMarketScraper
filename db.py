@@ -13,6 +13,7 @@ Special thanks to ChatGPT!
 
 import sqlite3
 import csv
+import glob
 
 def initialize_database():
     # Initialize database connection
@@ -60,5 +61,7 @@ def read_and_save(totalFile, conn):
     conn.close()
 
 if __name__ == "__main__":
-    conn = initialize_database()
-    read_and_save("total_2024-11-21-01-12-42.csv", conn)
+    files = glob.glob("total_*.csv")
+    for file in files:
+        conn = initialize_database()
+        read_and_save(file, conn)
