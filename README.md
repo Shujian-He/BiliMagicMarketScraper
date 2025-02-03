@@ -17,6 +17,7 @@
 ```
 ├── main.py          # The main scraper script
 ├── db.py            # Handles database operations (SQLite)
+├── tools.py         # Additional helper functions
 ├── sort_total.sh    # Shell script for sorting CSV files
 ├── cookies.txt      # Text file to put cookies to Bilibili
 ├── bilidata.db      # SQLite database (created upon running the scraper)
