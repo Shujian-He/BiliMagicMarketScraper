@@ -14,7 +14,7 @@ import requests
 import json
 import random
 from db import initialize_database, read_and_save
-from tools import load_cookie
+from tools import load_cookie, send_request
 import argparse
 
 # create the parser
@@ -23,9 +23,9 @@ parser = argparse.ArgumentParser(description="Process critical arguments.")
 # define wanted item names in list
 parser.add_argument(
     "-w", "--want",
-    nargs="+",  # Allows multiple arguments for this option
+    nargs="+",  # Allows multiple arguments for this option, stored as a list
     default=["初音未来"],
-    help="List of wanted item names (default: ['mega39'])"
+    help="List of wanted item names (default: ['初音未来'])"
 )
 # define priceFilters: in cents, 0 is infinite
 parser.add_argument(
@@ -48,16 +48,17 @@ priceFilter = args.price
 discountFilter = args.discount
 
 print("Want List:", wantList)
-print("Price Filters:", priceFilter)
+print("Price Filter:", priceFilter)
+print("Discount Filter:", discountFilter)
 
 def run(wantList, priceFilter, discountFilter):
     # define URL for market
     url = "https://mall.bilibili.com/mall-magic-c/internet/c2c/v2/list"
 
     # defime filenames
-    timeForFilename = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    wantFile = f"want_{timeForFilename}.csv"
-    totalFile = f"total_{timeForFilename}.csv"
+    fileTime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    wantFile = f"want_{fileTime}.csv"
+    totalFile = f"total_{fileTime}.csv"
 
     # define nextId
     nextId = None
@@ -82,7 +83,8 @@ def run(wantList, priceFilter, discountFilter):
         try:
             # sleep for 60s after 10min running
             currTime = time.time()
-            print("currTime:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(currTime)))
+            print("Current Time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(currTime)))
+
             if currTime - startTime > 600:
                 print("Start to sleep for 60s")
                 for i in range(0,60):
@@ -92,24 +94,20 @@ def run(wantList, priceFilter, discountFilter):
                 startTime = time.time()
             
             # send request
-            response = requests.request("POST", url, headers=headers, data=payload, timeout=10)
-            try:
-                responseData = response.json()
-            except Exception as e:
-                print(response.text)
-                print("Error Decoding json:", e)
-                continue
-
-            while responseData["code"] != 0:
-                print(responseData)
-                print("\nError occurred when getting data. Retrying...")
-                response = requests.request("POST", url, headers=headers, data=payload, timeout=10)
-                try:
-                    responseData = response.json()
-                except Exception as e:
-                    print(response.text)
-                    print("Error Decoding json:", e)
+            while True:
+                retry = False
+                responseData = send_request(url, headers, payload)
+                if responseData is None:
+                    retry = True
+                    break
+                elif responseData["code"] != 0:
+                    print(responseData)
+                    print("\nError occurred when getting data. Retrying...")
                     continue
+                else:
+                    break
+            if retry:
+                continue
 
             # update nextId
             nextId = responseData["data"]["nextId"]
@@ -165,8 +163,10 @@ def run(wantList, priceFilter, discountFilter):
 
     if os.path.exists(totalFile):
         read_and_save(totalFile, conn)
+        return totalFile
     else:
         print(f"File '{totalFile}' does not exist.")
+        return None
 
 if __name__ == "__main__":
     run(wantList, priceFilter, discountFilter)
