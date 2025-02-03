@@ -94,29 +94,29 @@ while True:
         response = requests.request("POST", url, headers=headers, data=payload, timeout=10)
         # print(response.text)
         try:
-            response = response.json()
+            responseData = response.json()
         except Exception as e:
             print("Error Decoding json:", e)
             continue
 
-        while response["code"] != 0:
+        while responseData["code"] != 0:
             print("\nError occurred when getting data. Retrying...")
             response = requests.request("POST", url, headers=headers, data=payload, timeout=10)
             # print(response.text)
             try:
-                response = response.json()
+                responseData = response.json()
             except Exception as e:
                 print("Error Decoding json:", e)
                 continue
 
         # update nextId
-        nextId = response["data"]["nextId"]
+        nextId = responseData["data"]["nextId"]
         if nextId is None:
             print("\nEnd reached.")
             break
         
         # extract data & process
-        data = response["data"]["data"]
+        data = responseData["data"]["data"]
         for item in data:
             timeNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
             item['time'] = timeNow
