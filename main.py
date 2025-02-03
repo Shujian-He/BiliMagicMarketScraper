@@ -69,7 +69,7 @@ def run(wantList, priceFilter, discountFilter):
 
     while True:
         payload = json.dumps({
-            "categoryFilter": "2312", # categoryFilter: 2312 for figure
+            "categoryFilter": "2312", # categoryFilter: 2312 for figure, 2066 for model, 2331 for goods, 2273 for 3c, fudai_cate_id for fudai
             "priceFilters": priceFilter,
             "discountFilters": discountFilter,
             "nextId": nextId
@@ -81,7 +81,7 @@ def run(wantList, priceFilter, discountFilter):
             'Cookie': load_cookie()
         }
         try:
-            # sleep for 60s after 10min running
+            # sleep for 60s after a period of time
             currTime = time.time()
             print("Current Time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(currTime)))
 
@@ -139,10 +139,10 @@ def run(wantList, priceFilter, discountFilter):
                         with open(wantFile, "a") as file:
                             file.write(f"{timeNow},{name},{id},{price},{marketPrice},{rate}\n")
 
-            # 90% probability to sleep for short time
+            # high probability to sleep for short time
             if random.random() < 0.9:
                 time.sleep(random.uniform(1, 2))
-            # 10% probability to sleep for lone time
+            # low probability to sleep for lone time
             else:
                 time.sleep(random.uniform(2, 3))
                 

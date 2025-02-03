@@ -22,5 +22,5 @@ def send_request(url, headers, payload):
         return response.json()
     except Exception as e:
         print(response.text)
-        print("Error Decoding json:", e)
+        print("\nError Decoding json:", e)
         return None
