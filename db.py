@@ -3,7 +3,7 @@ db.py
 Bili Market Scraper
 -------------------
 Author: Shujian
-Description: A scraper getting your favorite items in Bilibili market.
+Description: A scraper getting your favorite items in Bilibili magic market.
 License: MIT License
 """
 

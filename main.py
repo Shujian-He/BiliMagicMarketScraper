@@ -14,16 +14,8 @@ import requests
 import json
 import random
 from db import initialize_database, read_and_save
+from tools import load_cookie
 import argparse
-
-# function to load cookies
-def load_cookie(file_path='cookies.txt'):
-    try:
-        with open(file_path, 'r') as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        print(f"Cookie file '{file_path}' not found.")
-        return ''
 
 # create the parser
 parser = argparse.ArgumentParser(description="Process critical arguments.")
