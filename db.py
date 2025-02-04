@@ -34,7 +34,7 @@ def initialize_database():
     conn.commit()
     return conn
 
-def read_and_save(totalFile, conn):
+def insert_csv(totalFile, conn):
     cursor = conn.cursor()
     # Read data from the CSV file
     with open(totalFile, "r") as file:
@@ -60,8 +60,23 @@ def read_and_save(totalFile, conn):
     conn.commit()
     conn.close()
 
+def insert_line(row, conn):
+    cursor = conn.cursor()
+    time, name, id_, price, market_price, rate = row.split(",")
+    cursor.execute("""
+        INSERT OR REPLACE INTO products (id, name, price, market_price, rate, time)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        id_,
+        name,
+        int(price),
+        int(market_price),
+        float(rate),
+        time
+    ))
+
 if __name__ == "__main__":
     files = glob.glob("total_*.csv")
     for file in files:
         conn = initialize_database()
-        read_and_save(file, conn)
+        insert_csv(file, conn)

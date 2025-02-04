@@ -3,7 +3,7 @@
 
 ## Overview
 
-**Bili Magic Market Scraper** is a Python-based web scraping tool designed to extract product listings from the Bilibili magic market. It focuses on finding your favorite items based on specified criteria such as item name, price range, and discount rate. The scraped data is then sorted, stored in CSV files, and optionally inserted into an SQLite database for easy querying and analysis.
+**Bili Magic Market Scraper** is a Python-based web scraping tool designed to extract product listings from the Bilibili magic market. It focuses on finding your favorite items based on specified criteria such as item name, price range, and discount rate. The scraped data is then sorted, stored in CSV files, and inserted into an SQLite database for easy querying and analysis.
 
 ## Features
 
@@ -19,7 +19,7 @@
 ├── db.py            # Handles database operations (SQLite)
 ├── tools.py         # Additional helper functions
 ├── sort_total.sh    # Shell script for sorting CSV files
-├── cookies.txt      # Text file to put cookies to Bilibili
+├── cookies.txt      # Text file to put cookies from Bilibili
 ├── bilidata.db      # SQLite database (created upon running the scraper)
 ├── total_*.csv      # CSV files with all scraped items (created upon running the scraper)
 └── want_*.csv       # CSV files with filtered (wanted) items (created upon running the scraper)
@@ -81,7 +81,7 @@ This will generate 2 sorted files like `sort_total_*.csv` and `sort_want_*.csv`.
 
 ## Database
 
-After reaching the end of the items under current searching criteria, the data is automatically saved into an SQLite database (`bilidata.db`), which can be queried using tools like `DB Browser for SQLite` or via Python.
+The data is automatically saved into an SQLite database (`bilidata.db`) after each successful page fetch, which can be queried using tools like `DB Browser for SQLite` or via Python.
 
 - In case of main program error, run
 

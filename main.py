@@ -7,13 +7,12 @@ Description: A scraper getting your favorite items in Bilibili magic market.
 License: MIT License
 """
 
-import os
 import time
 from datetime import datetime
 import requests
 import json
 import random
-from db import initialize_database, read_and_save
+from db import initialize_database, insert_csv, insert_line
 from tools import load_cookie, send_request
 import argparse
 
@@ -67,6 +66,8 @@ def run(wantList, priceFilter, discountFilter):
     startTime = time.time()
     print("Start Time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(startTime)))
 
+    conn = initialize_database()
+
     while True:
         payload = json.dumps({
             "categoryFilter": "2312", # categoryFilter: 2312 for figure, 2066 for model, 2331 for goods, 2273 for 3c, fudai_cate_id for fudai
@@ -82,10 +83,10 @@ def run(wantList, priceFilter, discountFilter):
         }
         try:
             # sleep for 60s after a period of time
-            currTime = time.time()
-            print("Current Time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(currTime)))
+            currentTime = time.time()
+            print("Current Time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(currentTime)))
 
-            if currTime - startTime > 600:
+            if currentTime - startTime > 600:
                 print("Start to sleep for 60s")
                 for i in range(0,60):
                     time.sleep(1)
@@ -108,13 +109,8 @@ def run(wantList, priceFilter, discountFilter):
                     break
             if retry:
                 continue
-
-            # update nextId
-            nextId = responseData["data"]["nextId"]
-            if nextId is None:
-                print("\nEnd reached.")
-                break
             
+
             # extract data & process
             data = responseData["data"]["data"]
             for item in data:
@@ -131,13 +127,25 @@ def run(wantList, priceFilter, discountFilter):
                 marketPrice = item['detailDtoList'][0]['marketPrice']
                 rate = int(price) / int(marketPrice)
 
+                lineToWrite = f"{timeNow},{name},{id},{price},{marketPrice},{rate}\n"
+                insert_line(lineToWrite.strip(), conn)
+
                 with open(totalFile, "a") as file:
-                    file.write(f"{timeNow},{name},{id},{price},{marketPrice},{rate}\n")
+                    file.write(lineToWrite)
 
                 for wantName in wantList:
                     if wantName in name:
                         with open(wantFile, "a") as file:
-                            file.write(f"{timeNow},{name},{id},{price},{marketPrice},{rate}\n")
+                            file.write(lineToWrite)
+                        break
+
+            conn.commit()
+            
+            # update nextId
+            nextId = responseData["data"]["nextId"]
+            if nextId is None:
+                print("\nEnd reached.")
+                break
 
             # high probability to sleep for short time
             if random.random() < 0.9:
@@ -159,14 +167,14 @@ def run(wantList, priceFilter, discountFilter):
             print("Error:", e)
             break
 
-    conn = initialize_database()
+    conn.close()
 
-    if os.path.exists(totalFile):
-        read_and_save(totalFile, conn)
-        return totalFile
-    else:
-        print(f"File '{totalFile}' does not exist.")
-        return None
+    # if os.path.exists(totalFile):
+    #     insert_csv(totalFile, conn)
+    #     return totalFile
+    # else:
+    #     print(f"File '{totalFile}' does not exist.")
+    #     return None
 
 if __name__ == "__main__":
     run(wantList, priceFilter, discountFilter)
