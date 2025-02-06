@@ -19,6 +19,7 @@
 ├── db.py            # Handles database operations (SQLite)
 ├── tools.py         # Additional helper functions
 ├── sort_total.sh    # Shell script for sorting CSV files
+├── main.sh          # Shell script warpping main script (for shell lovers)
 ├── cookies.txt      # Text file to put cookies from Bilibili
 ├── bilidata.db      # SQLite database (created upon running the scraper)
 ├── total_*.csv      # CSV files with all scraped items (created upon running the scraper)
@@ -52,8 +53,14 @@
 
 Run the scraper using:
 
-```bash
+```sh
 python3 main.py -w <item_name> -p <price_range> -d <discount_range>
+```
+
+or if you like shell:
+
+```sh
+sh main.sh -w <item_name> -p <price_range> -d <discount_range>
 ```
 
 ### Arguments:
@@ -64,9 +71,16 @@ python3 main.py -w <item_name> -p <price_range> -d <discount_range>
 
 ### Example:
 
-```bash
+```sh
 python3 main.py -w 初音未来 孤独摇滚 -p 5000-15000 -d 10-50
 ```
+
+or
+
+```sh
+sh main.sh -w 初音未来 孤独摇滚 -p 5000-15000 -d 10-50
+```
+
 This will generate 2 files like `total_*.csv` and `want_*.csv`.
 
 ## Sorting Data
@@ -74,7 +88,7 @@ This will generate 2 files like `total_*.csv` and `want_*.csv`.
 After scraping, you can sort the CSV files by item name and discount rate:
 
 ```bash
-bash sort_total.sh
+sh sort_total.sh
 ```
 
 This will generate 2 sorted files like `sort_total_*.csv` and `sort_want_*.csv`.

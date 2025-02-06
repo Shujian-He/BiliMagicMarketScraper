@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # sort_total.sh
 # Bili Market Scraper

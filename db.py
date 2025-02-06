@@ -15,9 +15,9 @@ import sqlite3
 import csv
 import glob
 
-def initialize_database():
+def initialize_database(file_path='bilidata.db'):
     # Initialize database connection
-    conn = sqlite3.connect("bilidata.db")
+    conn = sqlite3.connect(file_path)
     cursor = conn.cursor()
     
     # Create the table if it doesn't exist

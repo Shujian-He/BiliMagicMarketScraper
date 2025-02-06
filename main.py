@@ -143,6 +143,7 @@ def run(wantList, priceFilter, discountFilter):
             
             # update nextId
             nextId = responseData["data"]["nextId"]
+            print(f"Next ID: {nextId}")
             if nextId is None:
                 print("\nEnd reached.")
                 break
