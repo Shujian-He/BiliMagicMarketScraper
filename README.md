@@ -94,8 +94,8 @@ The generated CSV files will have 6 columns, **without** a header row:
 | **Timestamp**   | Timestamp when the data was collected.     | `2025-02-01 16:04:41.964444` |
 | **Product Name** | Name of the product.   | `S-FIRE 初音未来 秋日之约Ver. 正比手办` |
 | **Product ID**   | Unique product identifier.         | `142389472138` |
-| **Current Price** | Selling price of the product.             | `34344` |
-| **Original Price** | Original price of the product.                   | `50500` |
+| **Current Price** | Selling price of the product in cents.             | `34344` |
+| **Original Price** | Original price of the product in cents.                   | `50500` |
 | **Discount Rate** | Discount rate compared to the original price.        | `0.6800792079207921` |
 
 - After scraping, you can sort the CSV files by item name and discount rate by running:
@@ -106,7 +106,6 @@ The generated CSV files will have 6 columns, **without** a header row:
 
    This will generate 2 sorted files like `sort_total_*.csv` and `sort_want_*.csv`.
 
-
 ### Database
 The database will have a similar structure:
 
@@ -114,8 +113,8 @@ The database will have a similar structure:
 |--------------|--------|-------------|
 | `id`         | TEXT   | Unique product identifier (Primary Key). |
 | `name`       | TEXT   | Name of the product. |
-| `price`      | INTEGER | Selling price of the product. |
-| `market_price` | INTEGER | Original price of the product. |
+| `price`      | INTEGER | Selling price of the product in cents. |
+| `market_price` | INTEGER | Original price of the product in cents. |
 | `rate`       | REAL   | Discount rate of the product. |
 | `time`       | TEXT   | Timestamp of data collection. |
 
