@@ -1,16 +1,14 @@
 
-# Bili Magic Market Scraper
+# Bilibili Magic Market Scraper
 
 ## Overview
 
-**Bili Magic Market Scraper** is a Python-based web scraping tool designed to extract product listings from the Bilibili magic market. It focuses on finding your favorite items based on specified criteria such as item name, price range, and discount rate. The scraped data is then sorted, stored in CSV files, and inserted into an SQLite database for easy querying and analysis.
+**Bilibili Magic Market Scraper** is a Python-based web scraping tool designed to extract product listings from the Bilibili magic market. It focuses on finding your favorite items based on specified criteria such as item name, price range, discount rate and category.
 
 ## Features
 
-- **Customizable Item Search**: Filter by item names, price ranges, and discount rates.
+- **Customizable Item Search**: Filter by item names, price ranges, discount rates and categories.
 - **Automated Data Storage**: Saves the scraped data into CSV files and an SQLite database.
-- **Data Sorting**: A shell script is included to sort the collected data for better readability.
-- **Resilient Design**: Handles timeouts and user interruptions gracefully.
 
 ## Project Structure
 
@@ -54,13 +52,13 @@
 Run the scraper using:
 
 ```sh
-python3 main.py -w <item_name> -p <price_range> -d <discount_range>
+python3 main.py -w <item_name> -p <price_range> -d <discount_range> -c <category>
 ```
 
 or if you like shell:
 
 ```sh
-sh main.sh -w <item_name> -p <price_range> -d <discount_range>
+sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
 ```
 
 ### Arguments:
@@ -68,6 +66,7 @@ sh main.sh -w <item_name> -p <price_range> -d <discount_range>
 - `-w, --want`: One or more item names you want to track. *(Default: 初音未来)*
 - `-p, --price`: Price range in cents. *(Default: 6000-10000)*
 - `-d, --discount`: Discount percentage range. *(Default: 0-100)*
+- `-c, --category`: Item category. 2312 for figure, 2066 for model, 2331 for goods, 2273 for 3c, fudai_cate_id for fudai. *(Default: 2312)*
 
 ### Example:
 
@@ -78,7 +77,7 @@ python3 main.py -w 初音未来 孤独摇滚 -p 5000-15000 -d 10-50
 or
 
 ```sh
-sh main.sh -w 初音未来 孤独摇滚 -p 5000-15000 -d 10-50
+sh main.sh -w fufu -p 5000-50000 -d 0-100 -c 2331
 ```
 
 This will generate 2 files like `total_*.csv` and `want_*.csv`.

@@ -13,6 +13,7 @@
 item_names=""
 price_range=""
 discount_range=""
+category=""
 
 # Parse command-line arguments
 while [ $# -gt 0 ]; do
@@ -34,6 +35,11 @@ while [ $# -gt 0 ]; do
             discount_range="$1"
             shift
             ;;
+        -c) 
+            shift
+            category="$1"
+            shift
+            ;;
         *)  # Handle unknown arguments
             shift
             ;;
@@ -44,4 +50,4 @@ done
 item_names=$(echo "$item_names" | sed 's/^ *//')
 
 # Execute the Python script
-exec python3 main.py -w $item_names -p $price_range -d $discount_range
+exec python3 main.py -w $item_names -p $price_range -d $discount_range -c $category

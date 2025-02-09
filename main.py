@@ -24,31 +24,46 @@ parser.add_argument(
     "-w", "--want",
     nargs="+",  # Allows multiple arguments for this option, stored as a list
     default=["初音未来"],
-    help="List of wanted item names (default: ['初音未来'])"
+    help="List of wanted item names (default: 初音未来)"
 )
 # define priceFilters: in cents, 0 is infinite
 parser.add_argument(
     "-p", "--price",
     nargs=1, # Accept only one value but store it as a list
     default=["6000-10000"],
-    help="price ranges in cents (default: ['6000-10000'])"
+    help="price ranges in cents (default: 6000-10000)"
 )
 # define discountFilters: percentage
 parser.add_argument(
     "-d", "--discount",
     nargs=1, # Accept only one value but store it as a list
     default=["0-100"],
-    help="discount rate (default: ['0-100'])"
+    help="discount rate (default: 0-100)"
+)
+# define category filter
+parser.add_argument(
+    "-c", "--category",
+    nargs="?", # Accept only one value
+    default="2312",
+    help="category filter: 2312 for figure, 2066 for model, 2331 for goods, 2273 for 3c, fudai_cate_id for fudai (default: 2312)"
 )
 
 args = parser.parse_args()
 wantList = args.want
 priceFilter = args.price
 discountFilter = args.discount
+categories = ["2312", "2066", "2331", "2273", "fudai_cate_id"]
+if args.category not in categories:
+    print("Invalid category filter. Use default value.")
+    print("Valid category: 2312 for figure, 2066 for model, 2331 for goods, 2273 for 3c, fudai_cate_id for fudai")
+    categoryFilter = "2312"
+else:
+    categoryFilter = args.category
 
 print("Want List:", wantList)
 print("Price Filter:", priceFilter)
 print("Discount Filter:", discountFilter)
+print("Category Filter:", categoryFilter)
 
 def run(wantList, priceFilter, discountFilter):
     # define URL for market
@@ -70,9 +85,10 @@ def run(wantList, priceFilter, discountFilter):
 
     while True:
         payload = json.dumps({
-            "categoryFilter": "2312", # categoryFilter: 2312 for figure, 2066 for model, 2331 for goods, 2273 for 3c, fudai_cate_id for fudai
+            "categoryFilter": categoryFilter,
             "priceFilters": priceFilter,
             "discountFilters": discountFilter,
+            "sortType": "TIME_ASC",
             "nextId": nextId
         })
 
