@@ -43,7 +43,7 @@
    - You can obtain your cookies from your browser’s developer tools:
       - Login to Bilibili main site, then open Bilibili magic market at https://mall.bilibili.com/neul-next/index.html?page=magic-market_index.
       - Press F12 to open developer tools, then locate to **Network** tab.
-      - Refresh the page (Press Ctrl+R on Windows or Command+R on macOS), and tap `list` file on the left side.
+      - Refresh the page (Press Ctrl+R on Windows or command+R on macOS), and tap `list` file on the left side.
       - Navigate to *Headers* - *Request Headers*, copy everything after **Cookie:**.
 
 
@@ -81,6 +81,8 @@ sh main.sh -w fufu -p 5000-50000 -d 0-100 -c 2331
 ```
 
 This will generate 2 CSV files like `total_*.csv` and `want_*.csv`, while the data was automatically saved into the SQLite database (`bilidata.db`) after each successful page fetch.
+
+It will stop after getting all items, or you can stop it manually by pressing *control+c*.
 
 
 ## About Data
@@ -125,7 +127,7 @@ It can be queried using tools like `DB Browser for SQLite` or via Python.
    python3 db.py
    ```
 
-   to manually save data in CSV files into the database.
+   to manually save data from CSV files into the database.
 
 
 ## How can I use the data
