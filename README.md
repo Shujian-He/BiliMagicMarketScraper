@@ -97,7 +97,7 @@ This will generate 2 sorted files like `sort_total_*.csv` and `sort_want_*.csv`.
 
 The data is automatically saved into an SQLite database (`bilidata.db`) after each successful page fetch, which can be queried using tools like `DB Browser for SQLite` or via Python.
 
-- In case of main program error, run
+- In case of main script error, run
 
    ```
    python3 db.py
