@@ -41,7 +41,7 @@
    - This scraper requires authentication cookies from your Bilibili account to access the market API.
    - Open `cookies.txt` and replace the placeholder cookies with your own.
    - You can obtain your cookies from your browser’s developer tools:
-      - Login to Bilibili main site, then open Bilibili market at https://mall.bilibili.com/neul-next/index.html?page=magic-market_index.
+      - Login to Bilibili main site, then open Bilibili magic market at https://mall.bilibili.com/neul-next/index.html?page=magic-market_index.
       - Press F12 to open developer tools, then locate to **Network** tab.
       - Refresh the page (Press Ctrl+R on Windows or Command+R on macOS), and tap `list` file on the left side.
       - Navigate to *Headers* - *Request Headers*, copy everything after **Cookie:**.
@@ -80,29 +80,67 @@ or
 sh main.sh -w fufu -p 5000-50000 -d 0-100 -c 2331
 ```
 
-This will generate 2 files like `total_*.csv` and `want_*.csv`.
+This will generate 2 CSV files like `total_*.csv` and `want_*.csv`, while the data was automatically saved into the SQLite database (`bilidata.db`) after each successful page fetch.
 
-## Sorting Data
 
-After scraping, you can sort the CSV files by item name and discount rate:
+## About Data
 
-```bash
-sh sort_total.sh
-```
+### CSV Files
 
-This will generate 2 sorted files like `sort_total_*.csv` and `sort_want_*.csv`.
+The generated CSV files will have 6 columns, **without** a header row:
 
-## Database
+| Column Name      | Description                                            | Example |
+|-----------------|--------------------------------------------------------|---------------------------|
+| **Timestamp**   | Timestamp when the data was collected.     | `2025-02-01 16:04:41.964444` |
+| **Product Name** | Name of the product.   | `S-FIRE 初音未来 秋日之约Ver. 正比手办` |
+| **Product ID**   | Unique product identifier.         | `142389472138` |
+| **Current Price** | Selling price of the product.             | `34344` |
+| **Original Price** | Original price of the product.                   | `50500` |
+| **Discount Rate** | Discount rate compared to the original price.        | `0.6800792079207921` |
 
-The data is automatically saved into an SQLite database (`bilidata.db`) after each successful page fetch, which can be queried using tools like `DB Browser for SQLite` or via Python.
+- After scraping, you can sort the CSV files by item name and discount rate by running:
 
+   ```bash
+   sh sort_total.sh
+   ```
+
+   This will generate 2 sorted files like `sort_total_*.csv` and `sort_want_*.csv`.
+
+
+### Database
+The database will have a similar structure:
+
+| Column Name  | Type   | Description |
+|--------------|--------|-------------|
+| `id`         | TEXT   | Unique product identifier (Primary Key). |
+| `name`       | TEXT   | Name of the product. |
+| `price`      | INTEGER | Selling price of the product. |
+| `market_price` | INTEGER | Original price of the product. |
+| `rate`       | REAL   | Discount rate of the product. |
+| `time`       | TEXT   | Timestamp of data collection. |
+
+It can be queried using tools like `DB Browser for SQLite` or via Python.
 - In case of main script error, run
 
-   ```
+   ```sh
    python3 db.py
    ```
 
    to manually save data in CSV files into the database.
+
+
+## How can I use the data
+
+You may access a specfic item by its product id, just use the following link but ***replace `<REPLACE_THIS_WITH_PRODUCT_ID>` with the product id*** in your browser:
+```
+https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleBar=1&itemsId=<REPLACE_THIS_WITH_PRODUCT_ID>&from=market_index
+```
+For example the link should be like:
+
+```
+https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleBar=1&itemsId=142389472138&from=market_index
+```
+
 
 ## License
 
