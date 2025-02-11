@@ -1,6 +1,8 @@
 
 # Bilibili Magic Market Scraper
 
+[English README](README.md) | [中文 README](README.zh.md)
+
 ## Overview
 
 **Bilibili Magic Market Scraper** is a Python-based web scraping tool designed to extract product listings from the Bilibili magic market. It focuses on finding your favorite items based on specified criteria such as item name, price range, discount rate and category.
@@ -29,7 +31,7 @@
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/Shujian-He/BiliMagicMarketScraper.git
-   cd BiliMarketScraper
+   cd BiliMagicMarketScraper
    ```
 
 2. **Install dependencies:**
@@ -66,7 +68,12 @@ sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
 - `-w, --want`: One or more item names you want to track. *(Default: 初音未来)*
 - `-p, --price`: Price range in cents. *(Default: 6000-10000)*
 - `-d, --discount`: Discount percentage range. *(Default: 0-100)*
-- `-c, --category`: Item category. 2312 for figure, 2066 for model, 2331 for goods, 2273 for 3c, fudai_cate_id for fudai. *(Default: 2312)*
+- `-c, --category`: Item category. See below for detail. *(Default: 2312)*
+  - `2312`：figure
+  - `2066`：model
+  - `2331`：merch
+  - `2273`：3C
+  - `fudai_cate_id`：fudai
 
 ### Example:
 
@@ -91,14 +98,14 @@ It will stop after getting all items, or you can stop it manually by pressing *c
 
 The generated CSV files will have 6 columns, **without** a header row:
 
-| Column Name      | Description                                            | Example |
-|-----------------|--------------------------------------------------------|---------------------------|
-| **Timestamp**   | Timestamp when the data was collected.     | `2025-02-01 16:04:41.964444` |
-| **Product Name** | Name of the product.   | `S-FIRE 初音未来 秋日之约Ver. 正比手办` |
-| **Product ID**   | Unique product identifier.         | `142389472138` |
-| **Current Price** | Selling price of the product in cents.             | `34344` |
-| **Original Price** | Original price of the product in cents.                   | `50500` |
-| **Discount Rate** | Discount rate compared to the original price.        | `0.6800792079207921` |
+| Column Name | Description | Example |
+|-|-|-|
+| **Timestamp** | Timestamp of data collection. | `2025-02-01 16:04:41.964444` |
+| **Product Name** | Name of the product. | `S-FIRE 初音未来 秋日之约Ver. 正比手办` |
+| **Product ID** | Unique product identifier. | `142389472138` |
+| **Current Price** | Selling price of the product in cents. | `34344` |
+| **Original Price** | Original price of the product in cents. | `50500` |
+| **Discount Rate** | Discount rate of the product. | `0.6800792079207921` |
 
 - After scraping, you can sort the CSV files by item name and discount rate by running:
 
@@ -111,14 +118,14 @@ The generated CSV files will have 6 columns, **without** a header row:
 ### Database
 The database will have a similar structure:
 
-| Column Name  | Type   | Description |
-|--------------|--------|-------------|
-| `id`         | TEXT   | Unique product identifier (Primary Key). |
-| `name`       | TEXT   | Name of the product. |
-| `price`      | INTEGER | Selling price of the product in cents. |
+| Column Name | Type | Description |
+|-|-|-|
+| `id` | TEXT | Unique product identifier (Primary Key). |
+| `name` | TEXT | Name of the product. |
+| `price` | INTEGER | Selling price of the product in cents. |
 | `market_price` | INTEGER | Original price of the product in cents. |
-| `rate`       | REAL   | Discount rate of the product. |
-| `time`       | TEXT   | Timestamp of data collection. |
+| `rate` | REAL | Discount rate of the product. |
+| `time` | TEXT | Timestamp of data collection. |
 
 It can be queried using tools like `DB Browser for SQLite` or via Python.
 - In case of main script error, run
@@ -145,7 +152,7 @@ https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleB
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
