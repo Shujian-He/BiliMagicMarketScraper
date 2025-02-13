@@ -15,14 +15,14 @@
 
 ```
 ├── main.py          # 主爬虫脚本
-├── db.py            # 处理数据库操作（SQLite）
+├── db.py            # 处理 SQLite 数据库操作的函数
 ├── tools.py         # 辅助工具函数
 ├── sort_total.sh    # 用于排序 CSV 文件的 Shell 脚本
-├── main.sh          # Shell 脚本，封装主爬虫脚本（适合 Shell 用户）
-├── cookies.txt      # 存放 B站账户 Cookies 的文本文件
+├── main.sh          # 封装主爬虫脚本的 Shell 脚本（适合 Shell 爱好者）
+├── cookies.txt      # 存放B站账户 Cookies 的文本文件
 ├── bilidata.db      # SQLite 数据库（运行爬虫后自动生成）
-├── total_*.csv      # 所有爬取的商品信息 CSV 文件（运行爬虫后生成）
-└── want_*.csv       # 筛选后的（感兴趣的）商品 CSV 文件（运行爬虫后生成）
+├── total_*.csv      # 包含所有爬取的商品信息的 CSV 文件（运行爬虫后生成）
+└── want_*.csv       # 包含筛选后的商品信息的 CSV 文件（运行爬虫后生成）
 ```
 
 ## 安装
@@ -42,9 +42,9 @@
    - 该爬虫需要使用你的B站账户的 Cookies 进行身份验证，以访问市集 API。
    - 打开 `cookies.txt`，将占位符替换为你的实际 Cookies。
    - 你可以在浏览器的开发者工具中获取 Cookies：
-     1. 登录 B站主页，并访问市集页面：https://mall.bilibili.com/neul-next/index.html?page=magic-market_index。
+     1. 登录B站主站 (https://www.bilibili.com/)，并访问市集页面：https://mall.bilibili.com/neul-next/index.html?page=magic-market_index。
      2. 按 `F12` 打开开发者工具，找到 **Network** 选项卡。
-     3. 刷新页面（Windows：`Ctrl+R`，macOS：`Command+R`），然后点击左侧的 `list` 文件。
+     3. 刷新页面（Windows：`Ctrl+R`，macOS：`command+R`），然后点击左侧的 `list` 文件。
      4. 进入 **Headers** - **Request Headers**，复制 **Cookie:** 之后的所有内容。
 
 ## 使用方法
@@ -55,7 +55,7 @@
 python3 main.py -w <商品名称> -p <价格范围> -d <折扣范围> -c <类别>
 ```
 
-或使用 Shell 脚本，如果你喜欢 Shell ：
+如果你是 Shell 爱好者，可使用 Shell ：
 
 ```sh
 sh main.sh -w <商品名称> -p <价格范围> -d <折扣范围> -c <类别>
@@ -97,10 +97,10 @@ sh main.sh -w fufu -p 5000-50000 -d 0-100 -c 2331
 
 | 列名 | 描述 | 示例 |
 |-|-|-|
-| **时间戳** | 采集数据的时间 | `2025-02-01 16:04:41.964444` |
+| **时间戳** | 采集时间戳 | `2025-02-01 16:04:41.964444` |
 | **商品名称** | 商品名称 | `S-FIRE 初音未来 秋日之约Ver. 正比手办` |
 | **商品 ID** | 商品的唯一标识符 | `142389472138` |
-| **当前价格** | 以分为单位的销售价格 | `34344` |
+| **当前价格** | 以分为单位的当前价格 | `34344` |
 | **原价** | 以分为单位的原价 | `50500` |
 | **折扣率** | 折扣率 | `0.6800792079207921` |
 
@@ -124,7 +124,7 @@ sh main.sh -w fufu -p 5000-50000 -d 0-100 -c 2331
 | `rate` | REAL | 折扣率 |
 | `time` | TEXT | 采集时间戳 |
 
-你可以使用 `DB Browser for SQLite` 或 Python 直接查询数据库。
+你可以使用 `DB Browser for SQLite` 或直接使用 Python 来查询数据库。
 
 - 如果主脚本发生错误，你可以手动运行以下命令将 CSV 数据存入数据库：
 
@@ -152,4 +152,4 @@ https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleB
 
 ## 致谢
 
-特别感谢 ChatGPT 帮助进行了代码编写和文档整理及翻译。
+特别感谢 ChatGPT 帮助进行了代码编写以及文档整理和翻译。

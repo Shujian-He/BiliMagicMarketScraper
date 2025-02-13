@@ -5,7 +5,7 @@
 
 ## Overview
 
-**Bilibili Magic Market Scraper** is a Python-based web scraping tool designed to extract product listings from the Bilibili magic market. It focuses on finding your favorite items based on specified criteria such as item name, price range, discount rate and category.
+**Bilibili Magic Market Scraper** is a Python-based web scraping tool designed to extract product listings from Bilibili magic market. It focuses on finding your favorite items based on specified criteria such as item name, price range, discount rate and category.
 
 ## Features
 
@@ -16,7 +16,7 @@
 
 ```
 ├── main.py          # The main scraper script
-├── db.py            # Handles database operations (SQLite)
+├── db.py            # Functions handle SQLite database operations
 ├── tools.py         # Additional helper functions
 ├── sort_total.sh    # Shell script for sorting CSV files
 ├── main.sh          # Shell script warpping main script (for shell lovers)
@@ -43,7 +43,7 @@
    - This scraper requires authentication cookies from your Bilibili account to access the market API.
    - Open `cookies.txt` and replace the placeholder cookies with your own.
    - You can obtain your cookies from your browser’s developer tools:
-      - Login to Bilibili main site, then open Bilibili magic market at https://mall.bilibili.com/neul-next/index.html?page=magic-market_index.
+      - Login to Bilibili main site (https://www.bilibili.com/), then open Bilibili magic market at https://mall.bilibili.com/neul-next/index.html?page=magic-market_index.
       - Press F12 to open developer tools, then locate to **Network** tab.
       - Refresh the page (Press Ctrl+R on Windows or command+R on macOS), and tap `list` file on the left side.
       - Navigate to *Headers* - *Request Headers*, copy everything after **Cookie:**.
