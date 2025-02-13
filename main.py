@@ -7,13 +7,11 @@ Description: A scraper getting your favorite items in Bilibili magic market.
 License: MIT License
 """
 
-import time
 from datetime import datetime
 import requests
 import json
-import random
-from db import initialize_database, insert_csv, insert_line
-from tools import load_cookie, send_request
+from db import initialize_database, insert_line
+from tools import load_cookie, send_request, check_and_sleep, random_sleep
 import argparse
 
 # create the parser
@@ -45,7 +43,7 @@ parser.add_argument(
     "-c", "--category",
     nargs="?", # Accept only one value
     default="2312",
-    help="category filter: 2312 for figure, 2066 for model, 2331 for goods, 2273 for 3c, fudai_cate_id for fudai (default: 2312)"
+    help="category filter: 2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai (default: 2312)"
 )
 
 args = parser.parse_args()
@@ -55,7 +53,7 @@ discountFilter = args.discount
 categories = ["2312", "2066", "2331", "2273", "fudai_cate_id"]
 if args.category not in categories:
     print("Invalid category filter. Use default value.")
-    print("Valid category: 2312 for figure, 2066 for model, 2331 for goods, 2273 for 3c, fudai_cate_id for fudai")
+    print("Valid category: 2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai")
     categoryFilter = "2312"
 else:
     categoryFilter = args.category
@@ -65,133 +63,105 @@ print("Price Filter:", priceFilter)
 print("Discount Filter:", discountFilter)
 print("Category Filter:", categoryFilter)
 
-def run(wantList, priceFilter, discountFilter):
+def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId=None):
+    # define file names
+    wantFile = f"want_{fileTimeString}.csv"
+    totalFile = f"total_{fileTimeString}.csv"
+
     # define URL for market
     url = "https://mall.bilibili.com/mall-magic-c/internet/c2c/v2/list"
 
-    # defime filenames
-    fileTime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    wantFile = f"want_{fileTime}.csv"
-    totalFile = f"total_{fileTime}.csv"
+    # define payload
+    payload = json.dumps({
+        "categoryFilter": categoryFilter,
+        "priceFilters": priceFilter,
+        "discountFilters": discountFilter,
+        "sortType": "TIME_ASC",
+        "nextId": nextId
+    })
 
-    # define nextId
-    nextId = None
+    # define headers
+    headers = {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/619.2.8.10.7 (KHTML, like Gecko) Mobile/22B83 BiliApp/81900100 os/ios model/iPhone 14 Pro mobi_app/iphone build/81900100 osVer/18.1 network/2 channel/AppStore',
+        'Cookie': load_cookie()
+    }
 
-    # define start time for the loop
-    startTime = time.time()
-    print("Start Time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(startTime)))
-
+    # initialize database connection
     conn = initialize_database()
+    
+    try:
+        # send request
+        random_sleep()
+        responseData = send_request(url, headers, payload)
 
-    while True:
-        payload = json.dumps({
-            "categoryFilter": categoryFilter,
-            "priceFilters": priceFilter,
-            "discountFilters": discountFilter,
-            "sortType": "TIME_ASC",
-            "nextId": nextId
-        })
+        if responseData is None:
+            print("\nNo response data. Retry.")
+            return nextId
+        elif responseData["code"] != 0:
+            print(responseData)
+            print("\nError occurred when getting data. Retry.")
+            return nextId
 
-        headers = {
-            'Content-Type': 'application/json',
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/619.2.8.10.7 (KHTML, like Gecko) Mobile/22B83 BiliApp/81900100 os/ios model/iPhone 14 Pro mobi_app/iphone build/81900100 osVer/18.1 network/2 channel/AppStore',
-            'Cookie': load_cookie()
-        }
-        try:
-            # sleep for 60s after a period of time
-            currentTime = time.time()
-            print("Current Time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(currentTime)))
+        # extract data & process
+        data = responseData["data"]["data"]
+        for item in data:
+            timeNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+            item['time'] = timeNow
 
-            if currentTime - startTime > 600:
-                print("Start to sleep for 60s")
-                for i in range(0,60):
-                    time.sleep(1)
-                    print(f"{i+1}s passed...")
-                print("Slept for 60s")
-                startTime = time.time()
-            
-            # send request
-            while True:
-                retry = False
-                responseData = send_request(url, headers, payload)
-                if responseData is None:
-                    retry = True
-                    break
-                elif responseData["code"] != 0:
-                    print(responseData)
-                    print("\nError occurred when getting data. Retrying...")
-                    continue
-                else:
-                    break
-            if retry:
+            # skip package with multiple items
+            if item['totalItemsCount'] > 1:
                 continue
-            
 
-            # extract data & process
-            data = responseData["data"]["data"]
-            for item in data:
-                timeNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-                item['time'] = timeNow
+            name = item["c2cItemsName"].replace("\n", " ").replace(",", " ").strip() # to avoid linefeed & comma
+            id = item['c2cItemsId']
+            price = item['price']
+            marketPrice = item['detailDtoList'][0]['marketPrice']
+            rate = int(price) / int(marketPrice)
 
-                # skip package with multiple items
-                if item['totalItemsCount'] > 1:
-                    continue
+            lineToWrite = f"{timeNow},{name},{id},{price},{marketPrice},{rate}\n"
+            insert_line(lineToWrite.strip(), conn)
+            conn.commit()
 
-                name = item["c2cItemsName"].replace("\n", " ").replace(",", " ").strip() # to avoid linefeed & comma
-                id = item['c2cItemsId']
-                price = item['price']
-                marketPrice = item['detailDtoList'][0]['marketPrice']
-                rate = int(price) / int(marketPrice)
+            with open(totalFile, "a") as file:
+                file.write(lineToWrite)
 
-                lineToWrite = f"{timeNow},{name},{id},{price},{marketPrice},{rate}\n"
-                insert_line(lineToWrite.strip(), conn)
-
-                with open(totalFile, "a") as file:
-                    file.write(lineToWrite)
-
+            with open(wantFile, "a") as file:
                 for wantName in wantList:
                     if wantName in name:
-                        with open(wantFile, "a") as file:
-                            file.write(lineToWrite)
+                        file.write(lineToWrite)
                         break
-
-            conn.commit()
-            
-            # update nextId
-            nextId = responseData["data"]["nextId"]
-            print(f"Next ID: {nextId}")
-            if nextId is None:
-                print("\nEnd reached.")
-                break
-
-            # high probability to sleep for short time
-            if random.random() < 0.9:
-                time.sleep(random.uniform(1, 2))
-            # low probability to sleep for lone time
-            else:
-                time.sleep(random.uniform(2, 3))
+        
+        # update nextId
+        nextId = responseData["data"]["nextId"]
+        print(f"Next ID: {nextId}")
+        if nextId is None:
+            print("\nEnd reached. Exiting.")
+        return nextId
                 
-        except requests.exceptions.Timeout:
-            print("\nThe request timed out")
-            continue
-            
-        except KeyboardInterrupt:
-            print("\nProcess interrupted by user.")
-            break
+    except requests.exceptions.Timeout:
+        print("\nThe request timed out. Retry.")
+        return nextId
+        
+    except KeyboardInterrupt:
+        print("\nProcess interrupted by user. Exiting.")
+        return None
 
-        except Exception as e:
-            print("\nUnknown error occurred.")
-            print("Error:", e)
-            break
-
-    conn.close()
-
-    # if os.path.exists(totalFile):
-    #     insert_csv(totalFile, conn)
-    #     return totalFile
-    # else:
-    #     print(f"File '{totalFile}' does not exist.")
-    #     return None
+    except Exception as e:
+        print(f"\nUnknown error occurred: {e}. Retry.")
+        return nextId
 
 if __name__ == "__main__":
-    run(wantList, priceFilter, discountFilter)
+    # record start time
+    startTime = datetime.now()
+    fileTimeString = startTime.strftime("%Y-%m-%d-%H-%M-%S")
+    print("Start Time:", startTime.strftime("%Y-%m-%d %H:%M:%S.%f"))
+    # run for the first time
+    nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, None)
+    while nextId:
+        # record current time
+        print("Current Time:", datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))
+        # sleep for 60s after a period of time
+        startTime = check_and_sleep(startTime)
+        # run again
+        nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId)
