@@ -21,6 +21,7 @@
 ├── sort_total.sh    # Shell script for sorting CSV files
 ├── main.sh          # Shell script warpping main script (for shell lovers)
 ├── cookies.txt      # Text file to put cookies from Bilibili
+├── nextId.txt       # Text file to store nextId in case of interruption. (created upon running the scraper, normally empty)
 ├── bilidata.db      # SQLite database (created upon running the scraper)
 ├── total_*.csv      # CSV files with all scraped items (created upon running the scraper)
 └── want_*.csv       # CSV files with filtered (wanted) items (created upon running the scraper)
@@ -74,6 +75,7 @@ sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
   - `2331`：merch
   - `2273`：3C
   - `fudai_cate_id`：fudai
+- `--id`: Specify if want to continue searching. (Read nextId from `nextId.txt`)
 
 ### Example:
 
@@ -90,6 +92,16 @@ sh main.sh -w fufu -p 5000-50000 -d 0-100 -c 2331
 This will generate 2 CSV files like `total_*.csv` and `want_*.csv`, while the data was automatically saved into the SQLite database (`bilidata.db`) after each successful page fetch.
 
 It will stop after getting all items, or you can stop it manually by pressing *control+c*.
+
+### In case of interruption:
+
+It happens sometimes when you stopped the script manually but whatever want to continue searching. During this kind of situation you can simply run:
+
+```sh
+python3 main.py --id
+```
+
+It will continue searching from where you stopped, perfectly avoid repeated search.
 
 
 ## About Data

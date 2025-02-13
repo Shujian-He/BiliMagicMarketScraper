@@ -20,6 +20,7 @@
 ├── sort_total.sh    # 用于排序 CSV 文件的 Shell 脚本
 ├── main.sh          # 封装主爬虫脚本的 Shell 脚本（适合 Shell 爱好者）
 ├── cookies.txt      # 存放B站账户 Cookies 的文本文件
+├── nextId.txt       # 存放 nextId 的文本文件，以防脚本中断（运行爬虫后生成，通常为空）
 ├── bilidata.db      # SQLite 数据库（运行爬虫后自动生成）
 ├── total_*.csv      # 包含所有爬取的商品信息的 CSV 文件（运行爬虫后生成）
 └── want_*.csv       # 包含筛选后的商品信息的 CSV 文件（运行爬虫后生成）
@@ -72,6 +73,7 @@ sh main.sh -w <商品名称> -p <价格范围> -d <折扣范围> -c <类别>
   - `2331`：周边
   - `2273`：3C 数码
   - `fudai_cate_id`：福袋
+- `--id`: 使用这个参数，如果你想继续搜索. (从`nextId.txt`读取 nextId)
 
 ### 使用示例：
 
@@ -88,6 +90,17 @@ sh main.sh -w fufu -p 5000-50000 -d 0-100 -c 2331
 运行后将生成两个 CSV 文件：`total_*.csv` 和 `want_*.csv`，同时数据也会自动存入 SQLite 数据库 `bilidata.db`。
 
 爬取完成后程序会自动停止，或者你可以按 `Ctrl+C` 手动停止。
+
+### 万一发生中断:
+
+当你手动停止了脚本，却又希望继续搜索时，只需运行：
+
+```sh
+python3 main.py --id
+```
+
+它将在你停下的地方继续进行查找，完美避免了重复搜索。
+
 
 ## 关于数据
 
