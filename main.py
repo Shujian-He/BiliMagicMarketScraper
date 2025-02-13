@@ -15,7 +15,7 @@ from tools import load_cookie, send_request, check_and_sleep, random_sleep
 import argparse
 
 # create the parser
-parser = argparse.ArgumentParser(description="Process critical arguments.")
+parser = argparse.ArgumentParser(description="Process arguments.")
 
 # define wanted item names in list
 parser.add_argument(
@@ -29,22 +29,25 @@ parser.add_argument(
     "-p", "--price",
     nargs=1, # Accept only one value but store it as a list
     default=["6000-10000"],
-    help="price ranges in cents (default: 6000-10000)"
+    help="Price ranges in cents (default: 6000-10000)"
 )
 # define discountFilters: percentage
 parser.add_argument(
     "-d", "--discount",
     nargs=1, # Accept only one value but store it as a list
     default=["0-100"],
-    help="discount rate (default: 0-100)"
+    help="Discount rate (default: 0-100)"
 )
 # define category filter
 parser.add_argument(
     "-c", "--category",
     nargs="?", # Accept only one value
     default="2312",
-    help="category filter: 2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai (default: 2312)"
+    help="Category filter: 2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai (default: 2312)"
 )
+
+# judge whether to get nextId from nextId.txt
+parser.add_argument('--id', action='store_true', help="Get nextId from nextId.txt")
 
 args = parser.parse_args()
 wantList = args.want
@@ -58,10 +61,24 @@ if args.category not in categories:
 else:
     categoryFilter = args.category
 
+nextId = None
+if args.id:
+    try:
+        with open("nextId.txt", 'r') as file:
+            content = file.read().strip()
+            if len(content) == 0:
+                print("\nnextId.txt is empty. Start from the beginning.")
+            else:
+                nextId = content
+                print(f"Continue from ID: {nextId}")
+    except FileNotFoundError:
+        print("\nnextId.txt does not exist. Start from the beginning.")
+
 print("Want List:", wantList)
 print("Price Filter:", priceFilter)
 print("Discount Filter:", discountFilter)
 print("Category Filter:", categoryFilter)
+print("Read Next ID:", nextId)
 
 def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId=None):
     # define file names
@@ -137,6 +154,10 @@ def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeStri
         print(f"Next ID: {nextId}")
         if nextId is None:
             print("\nEnd reached. Exiting.")
+            open('nextId.txt', 'w').close()
+        else:
+            with open("nextId.txt", "w") as file:
+                file.write(nextId)
         return nextId
                 
     except requests.exceptions.Timeout:
@@ -157,7 +178,7 @@ if __name__ == "__main__":
     fileTimeString = startTime.strftime("%Y-%m-%d-%H-%M-%S")
     print("Start Time:", startTime.strftime("%Y-%m-%d %H:%M:%S.%f"))
     # run for the first time
-    nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, None)
+    nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId)
     while nextId:
         # record current time
         print("Current Time:", datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))
