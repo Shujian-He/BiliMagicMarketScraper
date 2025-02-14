@@ -81,7 +81,7 @@ print("Discount Filter:", discountFilter)
 print("Category Filter:", categoryFilter)
 print("Read Next ID:", nextId)
 
-def run_once(fileTimeString, nextId=None):
+def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId=None):
     # define file names
     wantFile = f"want_{fileTimeString}.csv"
     totalFile = f"total_{fileTimeString}.csv"
@@ -90,20 +90,15 @@ def run_once(fileTimeString, nextId=None):
     url = "https://mall.bilibili.com/mall-magic-c/internet/c2c/v2/list"
 
     # define payload, payload is a json string
-    if not nextId:
-        payload = json.dumps({
-            "categoryFilter": categoryFilter,
-            "priceFilters": priceFilter,
-            "discountFilters": discountFilter,
-            "sortType": "TIME_DESC",
-            "nextId": None
-        })
-    else:
-        payload = json.dumps({
-            "sortType": "TIME_DESC",
-            "nextId": nextId
-        })
-    # print(f"Payload: {payload}\ntype: {type(payload)}")
+    # Note that nextId does not individually represent the next page, must include other parameters
+    payload = json.dumps({
+        "categoryFilter": categoryFilter,
+        "priceFilters": priceFilter,
+        "discountFilters": discountFilter,
+        "sortType": "TIME_DESC",
+        "nextId": nextId
+    })
+    print(f"Payload: {payload}\ntype: {type(payload)}")
 
     # define headers, header is a dict, not json string
     headers = {
@@ -188,11 +183,11 @@ if __name__ == "__main__":
     fileTimeString = startTime.strftime("%Y-%m-%d-%H-%M-%S")
     print("Start Time:", startTime.strftime("%Y-%m-%d %H:%M:%S.%f"))
     # run for the first time
-    nextId = run_once(fileTimeString, nextId)
+    nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId) # parameter must be nextId, not None, otherwise read nextId from nextId.txt will not work
     while nextId:
         # record current time
         print("Current Time:", datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))
         # sleep for 60s after a period of time
         startTime = check_and_sleep(startTime)
         # run again
-        nextId = run_once(fileTimeString, nextId)
+        nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId)

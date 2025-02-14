@@ -1,7 +1,7 @@
 import streamlit as st # pip3 install streamlit
 from streamlit_tags import st_tags # pip3 install streamlit-tags
 from datetime import datetime
-import main
+from main import run_once
 
 st.set_page_config(layout="wide")
 
@@ -11,7 +11,7 @@ if 'stop_flag' not in st.session_state:
 if 'next_id' not in st.session_state:
     st.session_state.next_id = None
 
-st.title("Bilibili Market Scraper")
+st.title("Bilibili Magic Market Scraper")
 
 want_list = st_tags(
     label='Enter item names:',
@@ -19,28 +19,29 @@ want_list = st_tags(
     value=['初音未来'],
     suggestions=[],
     maxtags = 10000,
-    key='1')
-# st.write(want_list)
+    key='want')
+st.write(want_list)
 
 # Select price range using a select_slider
 price_filter = st.select_slider(
     "Select Price Range (RMB Yuan)", 
-    options=[i for i in range(0, 501, 5)] + ["Infinity"],  # Creates a range
+    options=[i for i in range(0, 501, 5)] + ["Infinity"],
     value=(60, 100)
 )
 if price_filter[1] == "Infinity":
-    price_filter = (price_filter[0], 0) # 0 represents infinity
+    price_filter = [f"{price_filter[0] * 100}-0"] # 0 represents infinity
 else:
-    price_filter = (price_filter[0] * 100, price_filter[1] * 100)
-# st.write(price_filter)
+    price_filter = [f"{price_filter[0] * 100}-{price_filter[1] * 100}"]
+st.write(price_filter)
 
 # Select discount range using a select_slider
 discount_filter = st.select_slider(
     "Select Discount Range (%)", 
-    options=[i for i in range(0, 101, 1)],  # Creates a range from 0% to 100% with step 5
+    options=[i for i in range(0, 101, 1)],
     value=(0, 100)
 )
-# st.write(discount_filter)
+discount_filter = [f"{discount_filter[0]}-{discount_filter[1]}"]
+st.write(discount_filter)
 
 # Select category
 category_mapping = {
@@ -57,35 +58,46 @@ selected_category = st.radio(
     horizontal=True
 )
 category_filter = category_mapping[selected_category]
-# st.write(category_filter)
-
+st.write(category_filter)
 
 col1, col2 = st.columns(2)
 
 with col1:
-    if st.button("Run Scraper"):
+    if st.button("Run Scraper", key="run"):
         st.session_state.stop_flag = False  # Reset stop flag before starting
+
+        # st.write(f"Want List: {want_list}")
+        # st.write(f"Price Filter: {price_filter}")
+        # st.write(f"Discount Filter: {discount_filter}")
+        # st.write(f"Category Filter: {category_filter}")
+
         startTime = datetime.now()
         st.write(f"Start time: {startTime}")
 
         fileTimeString = startTime.strftime("%Y-%m-%d-%H-%M-%S")
+        with st.container(height=300):
+            print(st.session_state.next_id)
+            if not st.session_state.next_id:
+                st.write("Start a new search.")
+                nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, None)
+            else:
+                st.write(f"Continue the previous search from ID: {st.session_state.next_id}")
+                nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, st.session_state.next_id)
 
-        if not st.session_state.next_id:
-            st.write("Start a new search.")
-            nextId = main.run_once(fileTimeString, None)
-        else:
-            st.write(f"Continue the previous search from ID: {st.session_state.next_id}")
-            nextId = main.run_once(fileTimeString, st.session_state.next_id)
-
-        st.session_state.next_id = nextId
-        st.write(f"Next ID: {nextId}")
-
-        while nextId and not st.session_state.stop_flag:
-            nextId = main.run_once(fileTimeString, nextId)
             st.session_state.next_id = nextId
             st.write(f"Next ID: {nextId}")
 
+            while nextId and not st.session_state.stop_flag:
+                nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, nextId)
+                st.session_state.next_id = nextId
+                st.write(f"Next ID: {nextId}")
+        st.success("Finished.")
+
 with col2:
-    if st.button("Stop Scraping"):
+    if st.button("Stop Scraping", key="stop"):
         st.session_state.stop_flag = True
         st.success("Stopped.")
+    if st.button("Clear Cache", key="clear"):
+        st.session_state.next_id = None
+        st.success("Cache cleared.")
+        print(st.session_state.next_id)
