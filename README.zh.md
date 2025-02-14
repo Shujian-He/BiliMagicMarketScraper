@@ -17,6 +17,7 @@
 ├── main.py          # 主爬虫脚本
 ├── db.py            # 处理 SQLite 数据库操作的函数
 ├── tools.py         # 辅助工具函数
+├── ui.py            # 使用 Streamlit 的用户界面
 ├── sort_total.sh    # 用于排序 CSV 文件的 Shell 脚本
 ├── main.sh          # 封装主爬虫脚本的 Shell 脚本（适合 Shell 爱好者）
 ├── cookies.txt      # 存放B站账户 Cookies 的文本文件
@@ -28,18 +29,18 @@
 
 ## 安装
 
-1. **克隆仓库：**
+### 1. 克隆仓库
    ```bash
    git clone https://github.com/Shujian-He/BiliMagicMarketScraper.git
    cd BiliMagicMarketScraper
    ```
 
-2. **安装依赖：**
+### 2. 安装依赖
    ```bash
    pip3 install requests
    ```
 
-3. **设置 Cookies：**
+### 3. 设置 Cookies
    - 该爬虫需要使用你的B站账户的 Cookies 进行身份验证，以访问市集 API。
    - 打开 `cookies.txt`，将占位符替换为你的实际 Cookies。
    - 你可以在浏览器的开发者工具中获取 Cookies：
@@ -170,11 +171,10 @@ https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleB
 
 本爬虫脚本拥有一个使用 [`Streamlit`](https://streamlit.io/) 开发的用户界面。按照下方的步骤来使用。
 
-### 1. 安装
+### 1. 安装依赖
 
 ```sh
-pip3 install streamlit
-pip3 install streamlit-tags
+pip3 install streamlit streamlit-tags
 ```
 
 ### 2. 运行

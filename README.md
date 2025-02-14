@@ -18,6 +18,7 @@
 ├── main.py          # The main scraper script
 ├── db.py            # Functions handle SQLite database operations
 ├── tools.py         # Additional helper functions
+├── ui.py            # User Interface using Streamlit
 ├── sort_total.sh    # Shell script for sorting CSV files
 ├── main.sh          # Shell script warpping main script (for shell lovers)
 ├── cookies.txt      # Text file to put cookies from Bilibili
@@ -29,18 +30,18 @@
 
 ## Installation
 
-### 1. Clone the repository:
+### 1. Clone the repository
    ```sh
    git clone https://github.com/Shujian-He/BiliMagicMarketScraper.git
    cd BiliMagicMarketScraper
    ```
 
-### 2. Install dependencies:
+### 2. Install dependencies
    ```sh
    pip3 install requests
    ```
 
-### 3. Set Up Your Cookies:
+### 3. Set Up Your Cookies
    - This scraper requires authentication cookies from your Bilibili account to access the market API.
    - Open `cookies.txt` and replace the placeholder cookies with your own.
    - You can obtain your cookies from your browser’s developer tools:
@@ -64,7 +65,7 @@ or if you like shell:
 sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
 ```
 
-### Arguments:
+### Arguments
 
 - `-w, --want`: One or more item names you want to track. *(Default: 初音未来)*
 - `-p, --price`: Price range in cents. *(Default: 6000-10000)*
@@ -77,7 +78,7 @@ sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
   - `fudai_cate_id`：fudai
 - `--id`: Specify if want to continue searching. (Read nextId from `nextId.txt`)
 
-### Example:
+### Example
 
 ```sh
 python3 main.py -w 初音未来 孤独摇滚 -p 5000-15000 -d 10-50
@@ -93,7 +94,7 @@ This will generate 2 CSV files like `total_*.csv` and `want_*.csv`, while the da
 
 It will stop after getting all items, or you can stop it manually by pressing *control+c*.
 
-### In case of interruption:
+### In case of interruption
 
 It happens sometimes when the script was stopped accidently or intentionally but you whatever want to continue searching. During this kind of situation you can simply run:
 
@@ -172,11 +173,10 @@ https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleB
 
 The scraper comes with a simple user interface implemented using [`Streamlit`](https://streamlit.io/). Follow instructions below to use.
 
-### 1. Installation
+### 1. Install dependencies
 
 ```sh
-pip3 install streamlit
-pip3 install streamlit-tags
+pip3 install streamlit streamlit-tags
 ```
 
 ### 2. Run
