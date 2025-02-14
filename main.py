@@ -7,6 +7,7 @@ Description: A scraper getting your favorite items in Bilibili magic market.
 License: MIT License
 """
 
+import time
 from datetime import datetime
 import requests
 import json
@@ -121,7 +122,8 @@ def run_once(fileTimeString, nextId=None):
         responseData = send_request(url, headers, payload)
 
         if responseData is None:
-            print("\nNo response data. Retrying.")
+            print("\nNo response data. Possibly blocked. Retrying in 5 seconds.")
+            time.sleep(5)
             return nextId
         elif responseData["code"] != 0:
             print(responseData)

@@ -25,7 +25,7 @@ def send_request(url, headers, payload):
     try:
         return response.json()
     except Exception as e:
-        print(response.text)
+        # print(response.text)
         print("\nError Decoding json:", e)
         return None
     
@@ -45,7 +45,7 @@ def check_and_sleep(startTime):
 def random_sleep():
     # High probability to sleep for a short time
     if random.random() < 0.9:
-        sleep_time = random.uniform(0.9, 1)
+        sleep_time = random.uniform(1, 1.5)
     # Low probability to sleep for a longer time 
     else:
         sleep_time = random.uniform(2, 3)

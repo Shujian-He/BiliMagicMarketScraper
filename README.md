@@ -29,18 +29,18 @@
 
 ## Installation
 
-1. **Clone the repository:**
-   ```bash
+### 1. Clone the repository:
+   ```sh
    git clone https://github.com/Shujian-He/BiliMagicMarketScraper.git
    cd BiliMagicMarketScraper
    ```
 
-2. **Install dependencies:**
-   ```bash
+### 2. Install dependencies:
+   ```sh
    pip3 install requests
    ```
 
-3. **Set Up Your Cookies:**
+### 3. Set Up Your Cookies:
    - This scraper requires authentication cookies from your Bilibili account to access the market API.
    - Open `cookies.txt` and replace the placeholder cookies with your own.
    - You can obtain your cookies from your browser’s developer tools:
@@ -165,6 +165,24 @@ For example the link should be like:
 
 ```
 https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleBar=1&itemsId=142389472138&from=market_index
+```
+
+
+## User Interface (Beta)
+
+The scraper comes with a simple user interface implemented using [`Streamlit`](https://streamlit.io/). Follow instructions below to use.
+
+### 1. Installation
+
+```sh
+pip3 install streamlit
+pip3 install streamlit-tags
+```
+
+### 2. Run
+
+```sh
+streamlit run ui.py
 ```
 
 

@@ -165,6 +165,25 @@ https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleB
 https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleBar=1&itemsId=142389472138&from=market_index
 ```
 
+
+## 用户界面（测试版）
+
+本爬虫脚本拥有一个使用 [`Streamlit`](https://streamlit.io/) 开发的用户界面。按照下方的步骤来使用。
+
+### 1. 安装
+
+```sh
+pip3 install streamlit
+pip3 install streamlit-tags
+```
+
+### 2. 运行
+
+```sh
+streamlit run ui.py
+```
+
+
 ## 许可证
 
 本项目基于 MIT 许可证发布，详情请查看 [LICENSE](LICENSE) 文件。
