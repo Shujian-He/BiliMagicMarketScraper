@@ -80,7 +80,7 @@ print("Discount Filter:", discountFilter)
 print("Category Filter:", categoryFilter)
 print("Read Next ID:", nextId)
 
-def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId=None):
+def run_once(fileTimeString, nextId=None):
     # define file names
     wantFile = f"want_{fileTimeString}.csv"
     totalFile = f"total_{fileTimeString}.csv"
@@ -88,21 +88,29 @@ def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeStri
     # define URL for market
     url = "https://mall.bilibili.com/mall-magic-c/internet/c2c/v2/list"
 
-    # define payload
-    payload = json.dumps({
-        "categoryFilter": categoryFilter,
-        "priceFilters": priceFilter,
-        "discountFilters": discountFilter,
-        "sortType": "TIME_ASC",
-        "nextId": nextId
-    })
+    # define payload, payload is a json string
+    if not nextId:
+        payload = json.dumps({
+            "categoryFilter": categoryFilter,
+            "priceFilters": priceFilter,
+            "discountFilters": discountFilter,
+            "sortType": "TIME_DESC",
+            "nextId": None
+        })
+    else:
+        payload = json.dumps({
+            "sortType": "TIME_DESC",
+            "nextId": nextId
+        })
+    # print(f"Payload: {payload}\ntype: {type(payload)}")
 
-    # define headers
+    # define headers, header is a dict, not json string
     headers = {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/619.2.8.10.7 (KHTML, like Gecko) Mobile/22B83 BiliApp/81900100 os/ios model/iPhone 14 Pro mobi_app/iphone build/81900100 osVer/18.1 network/2 channel/AppStore',
-        'Cookie': load_cookie()
+        "Content-Type": "application/json",
+        "User-Agent": 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/619.2.8.10.7 (KHTML, like Gecko) Mobile/22B83 BiliApp/81900100 os/ios model/iPhone 14 Pro mobi_app/iphone build/81900100 osVer/18.1 network/2 channel/AppStore',
+        "Cookie": load_cookie()
     }
+    # print(f"Headers: {headers}\ntype: {type(headers)}")
 
     # initialize database connection
     conn = initialize_database()
@@ -178,11 +186,11 @@ if __name__ == "__main__":
     fileTimeString = startTime.strftime("%Y-%m-%d-%H-%M-%S")
     print("Start Time:", startTime.strftime("%Y-%m-%d %H:%M:%S.%f"))
     # run for the first time
-    nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId)
+    nextId = run_once(fileTimeString, nextId)
     while nextId:
         # record current time
         print("Current Time:", datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))
         # sleep for 60s after a period of time
         startTime = check_and_sleep(startTime)
         # run again
-        nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId)
+        nextId = run_once(fileTimeString, nextId)
