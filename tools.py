@@ -6,6 +6,7 @@ Author: Shujian
 Description: A scraper getting your favorite items in Bilibili magic market.
 License: MIT License
 """
+
 import requests
 import time
 from datetime import datetime, timedelta
@@ -44,10 +45,9 @@ def check_and_sleep(startTime):
 def random_sleep():
     # High probability to sleep for a short time
     if random.random() < 0.9:
-        sleep_time = random.uniform(0.5, 1.5)
+        sleep_time = random.uniform(0.9, 1)
     # Low probability to sleep for a longer time 
     else:
         sleep_time = random.uniform(2, 3)
-
     # print(f"Sleeping for {sleep_time:.2f} seconds.")
     time.sleep(sleep_time)

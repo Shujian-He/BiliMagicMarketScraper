@@ -70,7 +70,7 @@ if args.id:
                 print("\nnextId.txt is empty. Start from the beginning.")
             else:
                 nextId = content
-                print(f"Continue from ID: {nextId}")
+                print(f"\nContinue from ID: {nextId}")
     except FileNotFoundError:
         print("\nnextId.txt does not exist. Start from the beginning.")
 
@@ -113,11 +113,11 @@ def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeStri
         responseData = send_request(url, headers, payload)
 
         if responseData is None:
-            print("\nNo response data. Retry.")
+            print("\nNo response data. Retrying.")
             return nextId
         elif responseData["code"] != 0:
             print(responseData)
-            print("\nError occurred when getting data. Retry.")
+            print("\nError occurred when getting data. Retrying.")
             return nextId
 
         # extract data & process
@@ -161,15 +161,15 @@ def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeStri
         return nextId
                 
     except requests.exceptions.Timeout:
-        print("\nThe request timed out. Retry.")
+        print("\nThe request timed out. Retrying.")
         return nextId
         
     except KeyboardInterrupt:
-        print("\nProcess interrupted by user. Exiting.")
+        print("\nProcess interrupted by user. Progress saved. Exiting.")
         return None
 
     except Exception as e:
-        print(f"\nUnknown error occurred: {e}. Retry.")
+        print(f"\nUnknown error occurred: {e}. Retrying.")
         return nextId
 
 if __name__ == "__main__":

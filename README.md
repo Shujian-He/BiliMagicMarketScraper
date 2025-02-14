@@ -95,13 +95,15 @@ It will stop after getting all items, or you can stop it manually by pressing *c
 
 ### In case of interruption:
 
-It happens sometimes when you stopped the script manually but whatever want to continue searching. During this kind of situation you can simply run:
+It happens sometimes when the script was stopped accidently or intentionally but you whatever want to continue searching. During this kind of situation you can simply run:
 
 ```sh
 python3 main.py --id
 ```
 
 It will continue searching from where you stopped, perfectly avoid repeated search.
+
+- **Note**: `main.sh` does not support this feature.
 
 
 ## About Data
