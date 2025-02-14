@@ -84,7 +84,7 @@ python3 main.py -w 初音未来 孤独摇滚 -p 5000-15000 -d 10-50
 或
 
 ```sh
-sh main.sh -w fufu -p 5000-50000 -d 0-100 -c 2331
+sh main.sh -w fufu -p 5000-50000 -c 2331
 ```
 
 运行后将生成两个 CSV 文件：`total_*.csv` 和 `want_*.csv`，同时数据也会自动存入 SQLite 数据库 `bilidata.db`。
@@ -99,9 +99,13 @@ sh main.sh -w fufu -p 5000-50000 -d 0-100 -c 2331
 python3 main.py --id
 ```
 
-程序将在你停下的地方继续进行查找，完美避免了重复搜索。
+或
 
-- **注意：** `main.sh` 不支持这个功能。
+```sh
+sh main.sh --id
+```
+
+程序将在你停下的地方继续进行查找，完美避免了重复搜索。
 
 
 ## 关于数据

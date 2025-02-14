@@ -86,7 +86,7 @@ python3 main.py -w 初音未来 孤独摇滚 -p 5000-15000 -d 10-50
 or
 
 ```sh
-sh main.sh -w fufu -p 5000-50000 -d 0-100 -c 2331
+sh main.sh -w fufu -p 5000-50000 -c 2331
 ```
 
 This will generate 2 CSV files like `total_*.csv` and `want_*.csv`, while the data was automatically saved into the SQLite database (`bilidata.db`) after each successful page fetch.
@@ -101,9 +101,13 @@ It happens sometimes when the script was stopped accidently or intentionally but
 python3 main.py --id
 ```
 
-It will continue searching from where you stopped, perfectly avoid repeated search.
+or
 
-- **Note**: `main.sh` does not support this feature.
+```sh
+sh main.sh --id
+```
+
+It will continue searching from where you stopped, perfectly avoid repeated search.
 
 
 ## About Data
