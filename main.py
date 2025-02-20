@@ -143,21 +143,38 @@ if __name__ == "__main__":
         default="2312",
         help="Category filter: 2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai (default: 2312)"
     )
-
     # judge whether to get nextId from nextId.txt
     parser.add_argument('--id', action='store_true', help="Get nextId from nextId.txt")
-
     args = parser.parse_args()
+
+    # define wantList, priceFilter, discountFilter, categoryFilter
     wantList = args.want
     priceFilter = args.price
     discountFilter = args.discount
+    categoryFilter = args.category
+
+    # check if the input is valid
+    prices = ["0-2000", "2000-3000", "3000-5000", "5000-10000", "10000-20000", "20000-0"]
+    for price in priceFilter:
+        if price not in prices:
+            print(f"{price}: Invalid price filter. Use default value.")
+            print("Valid price: 0-2000, 2000-3000, 3000-5000, 5000-10000, 10000-20000, 20000-0")
+            priceFilter = ["10000-20000", "20000-0"]
+            break
+
+    discounts = ["0-30", "30-50", "50-70", "70-100"]
+    for discount in discountFilter:
+        if discount not in discounts:
+            print(f"{discount}: Invalid discount filter. Use default value.")
+            print("Valid discount: 0-30, 30-50, 50-70, 70-100")
+            discountFilter = ["0-30", "30-50", "50-70", "70-100"]
+            break
+
     categories = ["2312", "2066", "2331", "2273", "fudai_cate_id"]
-    if args.category not in categories:
-        print("Invalid category filter. Use default value.")
+    if categoryFilter not in categories:
+        print(f"{categoryFilter}: Invalid category filter. Use default value.")
         print("Valid category: 2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai")
         categoryFilter = "2312"
-    else:
-        categoryFilter = args.category
 
     nextId = None
     if args.id:

@@ -29,7 +29,7 @@ want_list = st_tags(
     suggestions=[],
     maxtags = 10000,
     key='want')
-st.write(want_list)
+# st.write(want_list)
 
 # Select price range using a select_slider
 # price_filter = st.select_slider(
@@ -42,9 +42,9 @@ st.write(want_list)
 price_filter = st.multiselect(
     "Select price range (cents)",
     ["0-2000", "2000-3000", "3000-5000", "5000-10000", "10000-20000", "20000-0"],
-    ["0-2000", "2000-3000", "3000-5000", "5000-10000", "10000-20000", "20000-0"],
+    ["10000-20000", "20000-0"],
 )
-st.write(price_filter)
+# st.write(price_filter)
 
 # Select discount range using a select_slider
 # discount_filter = st.select_slider(
@@ -59,7 +59,7 @@ discount_filter = st.multiselect(
     ["0-30", "30-50", "50-70", "70-100"],
     ["0-30", "30-50", "50-70", "70-100"],
 )
-st.write(discount_filter)
+# st.write(discount_filter)
 
 # Select category
 category_mapping = {
@@ -76,7 +76,7 @@ selected_category = st.radio(
     horizontal=True
 )
 category_filter = category_mapping[selected_category]
-st.write(category_filter)
+# st.write(category_filter)
 
 col1, col2 = st.columns(2)
 
