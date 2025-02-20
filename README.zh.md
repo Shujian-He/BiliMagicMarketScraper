@@ -91,13 +91,13 @@ sh main.sh -w <商品名称> -p <价格范围> -d <折扣范围> -c <类别>
 ### 使用示例：
 
 ```sh
-python3 main.py -w 初音未来 孤独摇滚 -p 5000-15000 -d 10-50
+python3 main.py -w 初音未来 孤独摇滚 -p 5000-10000 10000-20000 20000-0 -d 50-70 70-100
 ```
 
 或
 
 ```sh
-sh main.sh -w fufu -p 5000-50000 -c 2331
+sh main.sh -w fufu -p 10000-20000 -c 2331
 ```
 
 运行后将生成两个 CSV 文件：`total_*.csv` 和 `want_*.csv`，同时数据也会自动存入 SQLite 数据库 `bilidata.db`。

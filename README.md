@@ -93,13 +93,13 @@ sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
 ### Example
 
 ```sh
-python3 main.py -w 初音未来 孤独摇滚 -p 5000-15000 -d 10-50
+python3 main.py -w 初音未来 孤独摇滚 -p 5000-10000 10000-20000 20000-0 -d 50-70 70-100
 ```
 
 or
 
 ```sh
-sh main.sh -w fufu -p 5000-50000 -c 2331
+sh main.sh -w fufu -p 10000-20000 -c 2331
 ```
 
 This will generate 2 CSV files like `total_*.csv` and `want_*.csv`, while the data was automatically saved into the SQLite database (`bilidata.db`) after each successful page fetch.

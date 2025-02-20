@@ -28,13 +28,17 @@ while [ $# -gt 0 ]; do
             ;;
         -p | --price) 
             shift
-            price_range="$1"
-            shift
+            while [ $# -gt 0 ] && [ "${1#-}" = "$1" ]; do  # Stop at next flag
+                price_range="${price_range} $1"
+                shift
+            done
             ;;
         -d | --discount) 
             shift
-            discount_range="$1"
-            shift
+            while [ $# -gt 0 ] && [ "${1#-}" = "$1" ]; do  # Stop at next flag
+                discount_range="${discount_range} $1"
+                shift
+            done
             ;;
         -c | --category) 
             shift
@@ -51,7 +55,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-# Trim leading whitespace from item_names (POSIX-compatible way)
+# Trim leading whitespace from item_names
 item_names=$(echo "$item_names" | sed 's/^ *//')
 
 # Set default values if not provided
@@ -60,11 +64,11 @@ if [ -z "$item_names" ]; then
 fi
 
 if [ -z "$price_range" ]; then
-    price_range="6000-10000"
+    price_range="10000-20000 20000-0"
 fi
 
 if [ -z "$discount_range" ]; then
-    discount_range="0-100"
+    discount_range="0-30 30-50 50-70 70-100"
 fi
 
 if [ -z "$category" ]; then
