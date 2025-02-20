@@ -10,7 +10,6 @@ License: MIT License
 import time
 from datetime import datetime
 import requests
-import json
 from db import initialize_database, insert_line
 from tools import load_cookie, send_request, check_and_sleep, random_sleep
 import argparse
@@ -23,7 +22,7 @@ def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeStri
     # define URL for market
     url = "https://mall.bilibili.com/mall-magic-c/internet/c2c/v2/list"
 
-    # define payload, payload is a dict
+    # define payload, payload is a dict if using json parameter in requests.post
     # Note that nextId does not individually represent the next page, must include other parameters
     payload = {
         "categoryFilter": categoryFilter,
@@ -61,6 +60,12 @@ def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeStri
 
         # extract data & process
         data = responseData["data"]["data"]
+        if data is None:
+            print(responseData)
+            print("\nNo data. Possibly illegal request. Retrying in 5 seconds.")
+            time.sleep(5)
+            return nextId
+        
         for item in data:
             timeNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
             # item['time'] = timeNow
