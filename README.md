@@ -81,14 +81,14 @@ sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
   - `50-70`: 50% to 30% discount
   - `70-100`: 30% to 0 discount
 - `-c, --category`: Item category. See below for detail. *(Default: 2312)*
-  - `2312`：figure
-  - `2066`：model
-  - `2331`：merch
+  - `2312`：Figure
+  - `2066`：Model
+  - `2331`：Merch
   - `2273`：3C
-  - `fudai_cate_id`：fudai
+  - `fudai_cate_id`：Fudai
 - `--id`: Specify if want to continue searching. (Read nextId from `nextId.txt`)
 
-> ⚠️ **Note:** As of **2025-02-20**, the server only accepts certain `--price` and `--discount` parameters. Providing unsupported `--price` and `--discount` will result in empty data (`null`).
+> ⚠️ **Note:** As of **2025-02-20**, the server only accepts certain `--price` and `--discount` parameters above. Providing unsupported `--price` and `--discount` will result in empty data (`null`).
 
 ### Example
 

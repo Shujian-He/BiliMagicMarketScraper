@@ -125,15 +125,15 @@ if __name__ == "__main__":
     # define priceFilters: in cents, 0 is infinite
     parser.add_argument(
         "-p", "--price",
-        nargs=1, # Accept only one value but store it as a list
-        default=["20000-0"],
+        nargs="+", # Allows multiple arguments for this option, stored as a list
+        default=["10000-20000", "20000-0"],
         help="Price ranges in cents (default: 20000-0)"
     )
     # define discountFilters: percentage
     parser.add_argument(
         "-d", "--discount",
-        nargs=1, # Accept only one value but store it as a list
-        default=["70-100"],
+        nargs="+", # Allows multiple arguments for this option, stored as a list
+        default=["0-30", "30-50", "50-70", "70-100"],
         help="Discount rate (default: 70-100)"
     )
     # define category filter

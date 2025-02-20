@@ -32,21 +32,33 @@ want_list = st_tags(
 st.write(want_list)
 
 # Select price range using a select_slider
-price_filter = st.select_slider(
-    "Select Price Range (RMB Yuan)", 
-    options=[i for i in range(0, 501, 5)] + ["Infinity"],
-    value=(60, 100)
+# price_filter = st.select_slider(
+#     "Select Price Range (RMB Yuan)", 
+#     options=[i for i in range(0, 501, 5)] + ["Infinity"],
+#     value=(60, 100)
+# )
+# price_filter = [f"{price_filter[0] * 100}-{0 if price_filter[1] == 'Infinity' else price_filter[1] * 100}"]
+
+price_filter = st.multiselect(
+    "Select price range (cents)",
+    ["0-2000", "2000-3000", "3000-5000", "5000-10000", "10000-20000", "20000-0"],
+    ["0-2000", "2000-3000", "3000-5000", "5000-10000", "10000-20000", "20000-0"],
 )
-price_filter = [f"{price_filter[0] * 100}-{0 if price_filter[1] == 'Infinity' else price_filter[1] * 100}"]
 st.write(price_filter)
 
 # Select discount range using a select_slider
-discount_filter = st.select_slider(
-    "Select Discount Range (%)", 
-    options=[i for i in range(0, 101, 1)],
-    value=(0, 100)
+# discount_filter = st.select_slider(
+#     "Select Discount Range (%)", 
+#     options=[i for i in range(0, 101, 1)],
+#     value=(0, 100)
+# )
+# discount_filter = [f"{discount_filter[0]}-{discount_filter[1]}"]
+
+discount_filter = st.multiselect(
+    "Select discount range",
+    ["0-30", "30-50", "50-70", "70-100"],
+    ["0-30", "30-50", "50-70", "70-100"],
 )
-discount_filter = [f"{discount_filter[0]}-{discount_filter[1]}"]
 st.write(discount_filter)
 
 # Select category
