@@ -45,7 +45,7 @@
    - This scraper requires authentication cookies from your Bilibili account to access the market API.
    - Open `cookies.txt` and replace the placeholder cookies with your own.
    - You can obtain your cookies from your browser’s developer tools:
-      - Login to Bilibili main site (https://www.bilibili.com/), then open Bilibili magic market at https://mall.bilibili.com/neul-next/index.html?page=magic-market_index.
+      - Login to [Bilibili main site](https://www.bilibili.com/), then open [Bilibili magic market](https://mall.bilibili.com/neul-next/index.html?page=magic-market_index).
       - Press F12 to open developer tools, then locate to **Network** tab.
       - Refresh the page (Press Ctrl+R on Windows or command+R on macOS), and tap `list` file on the left side.
       - Navigate to *Headers* - *Request Headers*, copy everything after **Cookie:**.

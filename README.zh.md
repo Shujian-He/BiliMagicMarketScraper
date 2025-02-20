@@ -44,7 +44,7 @@
    - 该爬虫需要使用你的B站账户的 Cookies 进行身份验证，以访问市集 API。
    - 打开 `cookies.txt`，将占位符替换为你的实际 Cookies。
    - 你可以在浏览器的开发者工具中获取 Cookies：
-     1. 登录B站主站 (https://www.bilibili.com/)，并访问市集页面：https://mall.bilibili.com/neul-next/index.html?page=magic-market_index。
+     1. 登录[B站主站](https://www.bilibili.com/)，并访问[市集页面](https://mall.bilibili.com/neul-next/index.html?page=magic-market_index)。
      2. 按 `F12` 打开开发者工具，找到 **Network** 选项卡。
      3. 刷新页面（Windows：`Ctrl+R`，macOS：`command+R`），然后点击左侧的 `list` 文件。
      4. 进入 **Headers** - **Request Headers**，复制 **Cookie:** 之后的所有内容。
