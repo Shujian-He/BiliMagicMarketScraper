@@ -157,7 +157,7 @@ if __name__ == "__main__":
     prices = ["0-2000", "2000-3000", "3000-5000", "5000-10000", "10000-20000", "20000-0"]
     for price in priceFilter:
         if price not in prices:
-            print(f"{price}: Invalid price filter. Use default value.")
+            print(f"{price}: Invalid price filter. Use default value. ", end="")
             print("Valid price: 0-2000, 2000-3000, 3000-5000, 5000-10000, 10000-20000, 20000-0")
             priceFilter = ["10000-20000", "20000-0"]
             break
@@ -165,17 +165,18 @@ if __name__ == "__main__":
     discounts = ["0-30", "30-50", "50-70", "70-100"]
     for discount in discountFilter:
         if discount not in discounts:
-            print(f"{discount}: Invalid discount filter. Use default value.")
+            print(f"{discount}: Invalid discount filter. Use default value. ", end="")
             print("Valid discount: 0-30, 30-50, 50-70, 70-100")
             discountFilter = ["0-30", "30-50", "50-70", "70-100"]
             break
 
     categories = ["2312", "2066", "2331", "2273", "fudai_cate_id"]
     if categoryFilter not in categories:
-        print(f"{categoryFilter}: Invalid category filter. Use default value.")
+        print(f"{categoryFilter}: Invalid category filter. Use default value. ", end="")
         print("Valid category: 2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai")
         categoryFilter = "2312"
 
+    # check if nextId exists if use --id
     nextId = None
     if args.id:
         try:
@@ -189,18 +190,21 @@ if __name__ == "__main__":
         except FileNotFoundError:
             print("\nnextId.txt does not exist. Start from the beginning.")
 
+    # print parameters
+    print("\n", end="")
     print("Want List:", wantList)
     print("Price Filter:", priceFilter)
     print("Discount Filter:", discountFilter)
     print("Category Filter:", categoryFilter)
     print("Read Next ID:", nextId)
+    print("\n", end="")
 
     # record start time
     startTime = datetime.now()
     fileTimeString = startTime.strftime("%Y-%m-%d-%H-%M-%S")
     print("Start Time:", startTime.strftime("%Y-%m-%d %H:%M:%S.%f"))
     # run for the first time
-    nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId) # parameter must be nextId, not None, otherwise read nextId from nextId.txt will not work
+    nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId) # last parameter must be nextId, not None, otherwise read nextId from nextId.txt will not work
     while nextId:
         # record current time
         print("Current Time:", datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))

@@ -43,6 +43,7 @@ price_filter = st.multiselect(
     "Select price range (cents)",
     ["0-2000", "2000-3000", "3000-5000", "5000-10000", "10000-20000", "20000-0"],
     ["10000-20000", "20000-0"],
+    key="price",
 )
 # st.write(price_filter)
 
@@ -58,6 +59,7 @@ discount_filter = st.multiselect(
     "Select discount range",
     ["0-30", "30-50", "50-70", "70-100"],
     ["0-30", "30-50", "50-70", "70-100"],
+    key="discount",
 )
 # st.write(discount_filter)
 
@@ -97,18 +99,28 @@ with col1:
             print(st.session_state.next_id)
             if not st.session_state.next_id:
                 st.write("Start a new search.")
-                nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, None)
+                try:
+                    nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, None)
+                except Exception as e:
+                    st.error(f"Error: {e}")
             else:
                 st.write(f"Continue the previous search from ID: {st.session_state.next_id}")
-                nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, st.session_state.next_id)
+                try:
+                    nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, st.session_state.next_id)
+                except Exception as e:
+                    st.error(f"Error: {e}")
 
             st.session_state.next_id = nextId
             st.write(f"Next ID: {nextId}")
 
             while nextId and not st.session_state.stop_flag:
-                nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, nextId)
-                st.session_state.next_id = nextId
-                st.write(f"Next ID: {nextId}")
+                try:
+                    nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, nextId)
+                    st.session_state.next_id = nextId
+                    st.write(f"Next ID: {nextId}")
+                except Exception as e:
+                    st.error(f"Error: {e}")
+
         st.success("Finished.")
 
 with col2:
