@@ -21,7 +21,7 @@ def load_cookie(file_path='cookies.txt'):
         return ''
 
 def send_request(url, headers, payload):
-    response = requests.request("POST", url, headers=headers, data=payload, timeout=10)
+    response = requests.post(url, headers=headers, json=payload)
     try:
         return response.json()
     except Exception as e:

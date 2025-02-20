@@ -23,15 +23,15 @@ def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeStri
     # define URL for market
     url = "https://mall.bilibili.com/mall-magic-c/internet/c2c/v2/list"
 
-    # define payload, payload is a json string
+    # define payload, payload is a dict
     # Note that nextId does not individually represent the next page, must include other parameters
-    payload = json.dumps({
+    payload = {
         "categoryFilter": categoryFilter,
         "priceFilters": priceFilter,
         "discountFilters": discountFilter,
         "sortType": "TIME_DESC",
         "nextId": nextId
-    })
+    }
     # print(f"Payload: {payload}\ntype: {type(payload)}")
 
     # define headers, header is a dict, not json string
@@ -63,7 +63,7 @@ def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeStri
         data = responseData["data"]["data"]
         for item in data:
             timeNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-            item['time'] = timeNow
+            # item['time'] = timeNow
 
             # skip package with multiple items
             if item['totalItemsCount'] > 1:
@@ -126,15 +126,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "-p", "--price",
         nargs=1, # Accept only one value but store it as a list
-        default=["6000-10000"],
-        help="Price ranges in cents (default: 6000-10000)"
+        default=["20000-0"],
+        help="Price ranges in cents (default: 20000-0)"
     )
     # define discountFilters: percentage
     parser.add_argument(
         "-d", "--discount",
         nargs=1, # Accept only one value but store it as a list
-        default=["0-100"],
-        help="Discount rate (default: 0-100)"
+        default=["70-100"],
+        help="Discount rate (default: 70-100)"
     )
     # define category filter
     parser.add_argument(

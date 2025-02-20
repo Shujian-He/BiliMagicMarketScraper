@@ -68,8 +68,18 @@ sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
 ### Arguments
 
 - `-w, --want`: One or more item names you want to track. *(Default: 初音未来)*
-- `-p, --price`: Price range in cents. *(Default: 6000-10000)*
-- `-d, --discount`: Discount percentage range. *(Default: 0-100)*
+- `-p, --price`: Price range in cents. *(Default: 20000-0)*
+  - `0-2000`: 0 to 20 RMB Yuan
+  - `2000-3000`: 20 to 30 RMB Yuan
+  - `3000-5000`: 30 to 50 RMB Yuan
+  - `5000-10000`: 50 to 100 RMB Yuan
+  - `10000-20000`: 100 to 200 RMB Yuan
+  - `20000-0`: 200 RMB Yuan and more
+- `-d, --discount`: Discount percentage range. *(Default: 70-100)*
+  - `0-30`: 100% to 70% discount
+  - `30-50`: 70% to 50% discount
+  - `50-70`: 50% to 30% discount
+  - `70-100`: 30% to 0 discount
 - `-c, --category`: Item category. See below for detail. *(Default: 2312)*
   - `2312`：figure
   - `2066`：model
@@ -77,6 +87,8 @@ sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
   - `2273`：3C
   - `fudai_cate_id`：fudai
 - `--id`: Specify if want to continue searching. (Read nextId from `nextId.txt`)
+
+> ⚠️ **Note:** As of **2025-02-20**, the server only accepts certain `--price` and `--discount` parameters. Providing unsupported `--price` and `--discount` will result in empty data (`null`).
 
 ### Example
 

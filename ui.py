@@ -1,3 +1,12 @@
+"""
+ui.py
+Bili Market Scraper
+-------------------
+Author: Shujian
+Description: A scraper getting your favorite items in Bilibili magic market.
+License: MIT License
+"""
+
 import streamlit as st # pip3 install streamlit
 from streamlit_tags import st_tags # pip3 install streamlit-tags
 from datetime import datetime
@@ -28,10 +37,7 @@ price_filter = st.select_slider(
     options=[i for i in range(0, 501, 5)] + ["Infinity"],
     value=(60, 100)
 )
-if price_filter[1] == "Infinity":
-    price_filter = [f"{price_filter[0] * 100}-0"] # 0 represents infinity
-else:
-    price_filter = [f"{price_filter[0] * 100}-{price_filter[1] * 100}"]
+price_filter = [f"{price_filter[0] * 100}-{0 if price_filter[1] == 'Infinity' else price_filter[1] * 100}"]
 st.write(price_filter)
 
 # Select discount range using a select_slider
