@@ -67,26 +67,26 @@ sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
 
 ### Arguments
 
-- `-w, --want`: One or more item names you want to track. *(Default: `初音未来`)*
-- `-p, --price`: Price range in cents. *(Default: `10000-20000` `20000-0`)*
+- `-w, --want`: ***One or more*** item names you want to track. *(Default: `初音未来`)*
+- `-p, --price`: ***One or more*** price range in cents. *(Default: `10000-20000` `20000-0`)*
   - `0-2000`: 0 to 20 RMB Yuan
   - `2000-3000`: 20 to 30 RMB Yuan
   - `3000-5000`: 30 to 50 RMB Yuan
   - `5000-10000`: 50 to 100 RMB Yuan
   - `10000-20000`: 100 to 200 RMB Yuan
   - `20000-0`: 200 RMB Yuan and more
-- `-d, --discount`: Discount percentage range. *(Default: `0-30` `30-50` `50-70` `70-100`)*
+- `-d, --discount`: ***One or more*** discount percentage range. *(Default: `0-30` `30-50` `50-70` `70-100`)*
   - `0-30`: 100% to 70% discount
   - `30-50`: 70% to 50% discount
   - `50-70`: 50% to 30% discount
   - `70-100`: 30% to 0 discount
-- `-c, --category`: Item category. *(Default: `2312`)*
+- `-c, --category`: ***ONE*** item category. *(Default: `2312`)*
   - `2312`：Figure
   - `2066`：Model
   - `2331`：Merch
   - `2273`：3C
   - `fudai_cate_id`：Fudai
-- `--id`: Specify if want to continue searching. (Read nextId from `nextId.txt`)
+- `--id`: Specify if want to continue searching. *(Read nextId from `nextId.txt`)*
 
 > ⚠️ **Note:** As of **2025-02-20**, the server only accepts certain `--price` and `--discount` parameters above. Providing unsupported `--price` and `--discount` will result in empty data.
 
@@ -102,9 +102,9 @@ or
 sh main.sh -w fufu -p 10000-20000 -c 2331
 ```
 
-This will generate 2 CSV files like `total_*.csv` and `want_*.csv`, while the data was automatically saved into the SQLite database (`bilidata.db`) after each successful page fetch.
+This will generate 2 CSV files like `total_*.csv` and `want_*.csv`, while the data was automatically saved into the SQLite database (`bilidata.db`) after each successful page fetch. `nextId.txt` will also be generated and updated along.
 
-It will stop after getting all items, or you can stop it manually by pressing *control+c*.
+It will stop after getting all items, or you can stop it manually by pressing `control+c`.
 
 ### In case of interruption
 
