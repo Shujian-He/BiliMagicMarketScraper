@@ -11,6 +11,10 @@ import streamlit as st # pip3 install streamlit
 from streamlit_tags import st_tags # pip3 install streamlit-tags
 from datetime import datetime
 from main import run_once
+from db import initialize_database
+
+# initialize database connection
+conn = initialize_database()
 
 st.set_page_config(layout="wide")
 
@@ -100,13 +104,13 @@ with col1:
             if not st.session_state.next_id:
                 st.write("Start a new search.")
                 try:
-                    nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, None)
+                    nextId = run_once(conn, want_list, price_filter, discount_filter, category_filter, fileTimeString, None)
                 except Exception as e:
                     st.error(f"Error: {e}")
             else:
                 st.write(f"Continue the previous search from ID: {st.session_state.next_id}")
                 try:
-                    nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, st.session_state.next_id)
+                    nextId = run_once(conn, want_list, price_filter, discount_filter, category_filter, fileTimeString, st.session_state.next_id)
                 except Exception as e:
                     st.error(f"Error: {e}")
 
@@ -115,7 +119,7 @@ with col1:
 
             while nextId and not st.session_state.stop_flag:
                 try:
-                    nextId = run_once(want_list, price_filter, discount_filter, category_filter, fileTimeString, nextId)
+                    nextId = run_once(conn, want_list, price_filter, discount_filter, category_filter, fileTimeString, nextId)
                     st.session_state.next_id = nextId
                     st.write(f"Next ID: {nextId}")
                 except Exception as e:

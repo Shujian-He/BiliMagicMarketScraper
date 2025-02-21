@@ -14,7 +14,7 @@ from db import initialize_database, insert_line
 from tools import load_cookie, send_request, check_and_sleep, random_sleep
 import argparse
 
-def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId=None):
+def run_once(conn, wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId=None):
     # define file names
     wantFile = f"want_{fileTimeString}.csv"
     totalFile = f"total_{fileTimeString}.csv"
@@ -40,9 +40,6 @@ def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeStri
         "Cookie": load_cookie()
     }
     # print(f"Headers: {headers}\ntype: {type(headers)}")
-
-    # initialize database connection
-    conn = initialize_database()
     
     try:
         # send request
@@ -84,14 +81,16 @@ def run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeStri
             insert_line(lineToWrite.strip(), conn)
             conn.commit()
 
+            # write total file
             with open(totalFile, "a") as file:
                 file.write(lineToWrite)
 
-            with open(wantFile, "a") as file:
-                for wantName in wantList:
-                    if wantName in name:
+            # write want file, avoid redundant open
+            for wantName in wantList:
+                if wantName in name:
+                    with open(wantFile, "a") as file:
                         file.write(lineToWrite)
-                        break
+                    break
         
         # update nextId
         nextId = responseData["data"]["nextId"]
@@ -132,21 +131,21 @@ if __name__ == "__main__":
         "-p", "--price",
         nargs="+", # Allows multiple arguments for this option, stored as a list
         default=["10000-20000", "20000-0"],
-        help="Price ranges in cents (default: 20000-0)"
+        help="Price ranges in cents (0 is infinite, default: 10000-20000 20000-0)"
     )
     # define discountFilters: percentage
     parser.add_argument(
         "-d", "--discount",
         nargs="+", # Allows multiple arguments for this option, stored as a list
         default=["0-30", "30-50", "50-70", "70-100"],
-        help="Discount rate (default: 70-100)"
+        help="Discount rate (default: 0-30 30-50 50-70 70-100)"
     )
     # define category filter
     parser.add_argument(
         "-c", "--category",
         nargs="?", # Accept only one value
         default="2312",
-        help="Category filter: 2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai (default: 2312)"
+        help="Category filter (2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai, default: 2312)"
     )
     # judge whether to get nextId from nextId.txt
     parser.add_argument('--id', action='store_true', help="Get nextId from nextId.txt")
@@ -204,16 +203,19 @@ if __name__ == "__main__":
     print("Read Next ID:", nextId)
     print("\n", end="")
 
+    # initialize database connection
+    conn = initialize_database()
+
     # record start time
     startTime = datetime.now()
     fileTimeString = startTime.strftime("%Y-%m-%d-%H-%M-%S")
     print("Start Time:", startTime.strftime("%Y-%m-%d %H:%M:%S.%f"))
     # run for the first time
-    nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId) # last parameter must be nextId, not None, otherwise read nextId from nextId.txt will not work
+    nextId = run_once(conn, wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId) # last parameter must be nextId, not None, otherwise read nextId from nextId.txt will not work
     while nextId:
         # record current time
         print("Current Time:", datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))
         # sleep for 60s after a period of time
         startTime = check_and_sleep(startTime)
         # run again
-        nextId = run_once(wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId)
+        nextId = run_once(conn, wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId)
