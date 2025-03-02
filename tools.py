@@ -34,9 +34,13 @@ def check_and_sleep(startTime):
     
     if currentTime - startTime >= timedelta(seconds=600):
         print("Start to sleep for 60s")
-        for i in range(0, 60):
-            time.sleep(1)
-            print(f"{i+1}s passed...")
+        try:
+            for i in range(0, 60):
+                time.sleep(1)
+                print(f"{i+1}s passed...")
+        except KeyboardInterrupt:
+            print("Sleep interrupted by user. Exiting.")
+            return startTime
         print("Slept for 60s")
         startTime = datetime.now()
 
