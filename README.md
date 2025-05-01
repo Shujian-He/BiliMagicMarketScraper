@@ -176,11 +176,11 @@ It can be queried using tools like `DB Browser for SQLite` or via Python.
 
 ## How can I use the data
 
-You may access a specfic item by its product id, just use the following link but ***replace `<REPLACE_THIS_WITH_PRODUCT_ID>` with the product id*** in your browser:
+You may access a specfic item by its product id, just use the following URL but ***replace `<REPLACE_THIS_WITH_PRODUCT_ID>` with specific product id*** in your browser:
 ```
 https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleBar=1&itemsId=<REPLACE_THIS_WITH_PRODUCT_ID>&from=market_index
 ```
-For example the link should be like:
+For example the URL should be like:
 
 ```
 https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleBar=1&itemsId=142389472138&from=market_index

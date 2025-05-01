@@ -4,7 +4,7 @@
 
 ## 概述
 
-**B站市集爬虫**是一个基于 Python 的网页爬取工具，专门用于从B站市集中提取商品信息。它可以根据指定的条件（如商品名称、价格范围、折扣率和类别）查找你喜欢的商品。
+**B站市集爬虫**是一个基于 Python 的网页爬虫，用于从B站市集中提取商品信息。它可以根据指定的条件（如商品名称、价格范围、折扣率和类别）查找你喜欢的商品。
 
 ## 功能特点
 
@@ -41,7 +41,7 @@
    ```
 
 ### 3. 设置 Cookies
-   - 该爬虫需要使用你的B站账户的 Cookies 进行身份验证，以访问市集 API。
+   - 本爬虫需要使用你的B站账户的 Cookies 进行身份验证，以访问市集 API。
    - 打开 `cookies.txt`，将占位符替换为你的实际 Cookies。
    - 你可以在浏览器的开发者工具中获取 Cookies：
      1. 登录[B站主站](https://www.bilibili.com/)，并访问[市集页面](https://mall.bilibili.com/neul-next/index.html?page=magic-market_index)。
@@ -84,9 +84,9 @@ sh main.sh -w <商品名称> -p <价格范围> -d <折扣范围> -c <类别>
   - `2331`：周边
   - `2273`：3C 数码
   - `fudai_cate_id`：福袋
-- `--id`: 使用这个参数，如果你想继续搜索。*（从`nextId.txt`读取 nextId）*
+- `--id`: 使用这个参数来从中断的地方继续搜索。*（从`nextId.txt`读取 nextId）*
 
-> ⚠️ **注意:** 自 **2025-02-20** 开始，服务器仅接受上述特定的 `--price` 和 `--discount` 参数。提供不支持的 `--price` 和 `--discount` 参数将导致返回的数据为空。
+> ⚠️ **注意:** 自 **2025-02-20** 开始，B站服务器仅接受上述特定的 `--price` 和 `--discount` 参数。使用不支持的 `--price` 和 `--discount` 参数将导致返回的数据为空。
 
 ### 使用示例：
 
@@ -106,7 +106,7 @@ sh main.sh -w fufu -p 10000-20000 -c 2331
 
 ### 万一发生中断:
 
-当程序意外或被手动停止，却又希望继续搜索时，只需运行：
+当程序意外或被手动停止，又希望继续搜索时，只需运行：
 
 ```sh
 python3 main.py <之前的参数> --id
@@ -124,7 +124,7 @@ sh main.sh <之前的参数> --id
 python3 main.py -w 初音未来 孤独摇滚 -p 5000-10000 10000-20000 20000-0 -d 50-70 70-100 --id
 ```
 
-程序将在你停下的地方继续进行查找，完美避免了重复搜索。
+程序将在中断的地方继续爬取，完美避免了重复搜索。
 
 
 ## 关于数据
@@ -162,7 +162,7 @@ python3 main.py -w 初音未来 孤独摇滚 -p 5000-10000 10000-20000 20000-0 -
 | `rate` | REAL | 折扣率 |
 | `time` | TEXT | 采集时间戳 |
 
-你可以使用 `DB Browser for SQLite` 或直接使用 Python 来查询数据库。
+你可以使用 `DB Browser for SQLite` 等工具或直接使用 Python 来查询数据库。
 
 - 如果主脚本发生错误，你可以手动运行以下命令将 CSV 数据存入数据库：
 
@@ -187,7 +187,7 @@ https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleB
 
 ## 用户界面（测试版）
 
-本爬虫脚本拥有一个使用 [`Streamlit`](https://streamlit.io/) 开发的用户界面。按照下方的步骤来使用。
+本爬虫脚本附带一个使用 [`Streamlit`](https://streamlit.io/) 开发的用户界面。你可以按照下方的步骤使用。
 
 ### 1. 安装依赖
 
