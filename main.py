@@ -108,8 +108,14 @@ def run_once(conn, wantList, priceFilter, discountFilter, categoryFilter, fileTi
         return nextId
         
     except KeyboardInterrupt:
-        print("\nProcess interrupted by user. Progress saved. Exiting.")
-        return None
+        print("\nProcess interrupted by user. Press 'r' to run again or any other key to exit.")
+        choice = input().strip().lower()
+        if choice != 'r':
+            print("Progress saved. Exiting.")
+            return None
+        else:
+            print("Running again.")
+            return nextId
 
     except Exception as e:
         print(f"\nUnknown error occurred: {e}. Retrying.")

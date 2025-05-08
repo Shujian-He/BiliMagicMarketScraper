@@ -21,17 +21,16 @@ def load_cookie(file_path='cookies.txt'):
         return ''
 
 def send_request(url, headers, payload):
-    response = requests.post(url, headers=headers, json=payload)
     try:
+        response = requests.post(url, headers=headers, json=payload)
         return response.json()
     except Exception as e:
         # print(response.text)
-        print("\nError Decoding json:", e)
+        print("\nError:", e)
         return None
     
 def check_and_sleep(startTime):
     currentTime = datetime.now()
-    
     if currentTime - startTime >= timedelta(seconds=600):
         print("Start to sleep for 60s")
         try:
