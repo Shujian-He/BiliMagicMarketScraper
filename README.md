@@ -80,7 +80,7 @@ sh main.sh -w <item_name> -p <price_range> -d <discount_range> -c <category>
   - `30-50`: 70% to 50% discount
   - `50-70`: 50% to 30% discount
   - `70-100`: 30% to 0 discount
-- `-c, --category`: ***ONE*** item category. *(Default: `2312`)*
+- `-c, --category`: ***ONE*** item category. *(Default: blank)*
   - `2312`：Figure
   - `2066`：Model
   - `2331`：Merch

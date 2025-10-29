@@ -150,8 +150,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "-c", "--category",
         nargs="?", # Accept only one value
-        default="2312",
-        help="Category filter (2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai, default: 2312)"
+        default="",
+        help="Category filter (2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai, default: blank)"
     )
     # judge whether to get nextId from nextId.txt
     parser.add_argument('--id', action='store_true', help="Get nextId from nextId.txt")
@@ -180,11 +180,11 @@ if __name__ == "__main__":
             discountFilter = ["0-30", "30-50", "50-70", "70-100"]
             break
 
-    categories = ["2312", "2066", "2331", "2273", "fudai_cate_id"]
+    categories = ["2312", "2066", "2331", "2273", "fudai_cate_id", ""]
     if categoryFilter not in categories:
         print(f"{categoryFilter}: Invalid category filter. Use default value. ", end="")
         print("Valid category: 2312 for figure, 2066 for model, 2331 for merch, 2273 for 3c, fudai_cate_id for fudai")
-        categoryFilter = "2312"
+        categoryFilter = ""
 
     # check if nextId exists if use --id
     nextId = None

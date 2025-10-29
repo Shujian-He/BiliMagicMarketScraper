@@ -22,7 +22,7 @@ def load_cookie(file_path='cookies.txt'):
 
 def send_request(url, headers, payload):
     try:
-        response = requests.post(url, headers=headers, json=payload)
+        response = requests.post(url, headers=headers, json=payload, timeout=5)
         return response.json()
     except Exception as e:
         # print(response.text)
@@ -39,6 +39,7 @@ def check_and_sleep(startTime):
                 print(f"{i+1}s passed...")
         except KeyboardInterrupt:
             print("Sleep interrupted by user. Exiting.")
+            startTime = datetime.now()
             return startTime
         print("Slept for 60s")
         startTime = datetime.now()
