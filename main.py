@@ -15,6 +15,8 @@ from tools import load_cookie, send_request, check_and_sleep, random_sleep
 import argparse
 
 def run_once(conn, wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId=None):
+    print("Current Time:", datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))
+
     # define file names
     wantFile = f"want_{fileTimeString}.csv"
     totalFile = f"total_{fileTimeString}.csv"
@@ -216,12 +218,22 @@ if __name__ == "__main__":
     startTime = datetime.now()
     fileTimeString = startTime.strftime("%Y-%m-%d-%H-%M-%S")
     print("Start Time:", startTime.strftime("%Y-%m-%d %H:%M:%S.%f"))
-    # run for the first time
-    nextId = run_once(conn, wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId) # last parameter must be nextId, not None, otherwise read nextId from nextId.txt will not work
-    while nextId:
-        # record current time
-        print("Current Time:", datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))
+
+    currentId = nextId
+    while True:
+        currentId = run_once(conn, wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, currentId) # last parameter must be nextId, not None, otherwise read nextId from nextId.txt will not work
+        if not currentId:
+            break
         # sleep for 60s after a period of time
         startTime = check_and_sleep(startTime)
-        # run again
-        nextId = run_once(conn, wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId)
+
+    conn.close()
+    # # run for the first time
+    # nextId = run_once(conn, wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId) # last parameter must be nextId, not None, otherwise read nextId from nextId.txt will not work
+    # while nextId:
+    #     # record current time
+    #     # print("Current Time:", datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))
+    #     # sleep for 60s after a period of time
+    #     startTime = check_and_sleep(startTime)
+    #     # run again
+    #     nextId = run_once(conn, wantList, priceFilter, discountFilter, categoryFilter, fileTimeString, nextId)

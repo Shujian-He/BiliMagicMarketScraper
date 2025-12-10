@@ -164,7 +164,7 @@ The database will have a similar structure:
 | `rate` | REAL | Discount rate of the product. |
 | `time` | TEXT | Timestamp of data collection. |
 
-It can be queried using tools like `DB Browser for SQLite` or via Python.
+It can be queried using tools like [`DB Browser for SQLite`](https://sqlitebrowser.org/), [`sqlite-web`](https://github.com/coleifer/sqlite-web) or via Python.
 - In case of main script error, run
 
    ```sh

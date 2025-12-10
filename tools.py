@@ -21,12 +21,17 @@ def load_cookie(file_path='cookies.txt'):
         return ''
 
 def send_request(url, headers, payload):
-    try:
-        response = requests.post(url, headers=headers, json=payload, timeout=5)
-        return response.json()
-    except Exception as e:
-        # print(response.text)
-        print("\nError:", e)
+    response = requests.post(url, headers=headers, json=payload, timeout=5)
+    code = response.status_code
+    if code == 200:
+        try:
+            return response.json()
+        except Exception as e:
+            # print(response.text)
+            print(f"\nError:", e)
+            return None
+    else:
+        print(f"\nError: HTTP code {code}, {response.text}")
         return None
     
 def check_and_sleep(startTime):
