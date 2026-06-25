@@ -1,27 +1,29 @@
 """
-db.py
-Bili Market Scraper
--------------------
-Author: Shujian
-Description: A scraper getting your favorite items in Bilibili magic market.
-License: MIT License
+SQLite persistence for Bilibili Magic Market products.
+
+The schema intentionally remains compatible with existing ``bilidata.db`` files.
 """
 
-"""
-Special thanks to ChatGPT!
-"""
-
-import sqlite3
 import csv
 import glob
+import sqlite3
 
-def initialize_database(file_path='bilidata.db'):
-    # Initialize database connection
-    conn = sqlite3.connect(file_path)
-    cursor = conn.cursor()
-    
-    # Create the table if it doesn't exist
-    cursor.execute("""
+UPSERT_PRODUCTS = """
+    INSERT INTO products (id, name, price, market_price, rate, time)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+        name = excluded.name,
+        price = excluded.price,
+        market_price = excluded.market_price,
+        rate = excluded.rate,
+        time = excluded.time
+"""
+
+
+def initialize_database(file_path="bilidata.db"):
+    connection = sqlite3.connect(file_path)
+    connection.execute(
+        """
         CREATE TABLE IF NOT EXISTS products (
             id TEXT PRIMARY KEY,
             name TEXT,
@@ -30,53 +32,38 @@ def initialize_database(file_path='bilidata.db'):
             rate REAL,
             time TEXT
         )
-    """)
-    conn.commit()
-    return conn
+        """
+    )
+    connection.commit()
+    return connection
 
-def insert_csv(totalFile, conn):
-    cursor = conn.cursor()
-    # Read data from the CSV file
-    with open(totalFile, "r") as file:
-        reader = csv.reader(file)
-        for row in reader:
-            # print(row)
-            time, name, id_, price, market_price, rate = row
-            
-            # Insert data into the database
-            cursor.execute("""
-                INSERT OR REPLACE INTO products (id, name, price, market_price, rate, time)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (
-                id_,
-                name,
-                int(price),
-                int(market_price),
-                float(rate),
-                time
-            ))
-            
-    # Commit and close the database connection
-    conn.commit()
-    conn.close()
 
-def insert_line(row, conn):
-    cursor = conn.cursor()
-    time, name, id_, price, market_price, rate = row.split(",")
-    cursor.execute("""
-        INSERT OR REPLACE INTO products (id, name, price, market_price, rate, time)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (
-        id_,
-        name,
-        int(price),
-        int(market_price),
-        float(rate),
-        time
-    ))
+def insert_products(rows, connection):
+    """Upsert structured product rows without committing the transaction."""
+    connection.executemany(UPSERT_PRODUCTS, rows)
+
+
+def insert_csv(total_file, connection):
+    rows = []
+    with open(total_file, newline="", encoding="utf-8") as file:
+        for captured_at, name, product_id, price, market_price, rate in csv.reader(file):
+            rows.append(
+                (
+                    product_id,
+                    name,
+                    int(price),
+                    int(market_price),
+                    float(rate),
+                    captured_at,
+                )
+            )
+
+    insert_products(rows, connection)
+    connection.commit()
+    connection.close()
+
 
 if __name__ == "__main__":
-    files = glob.glob("total_*.csv")
-    for file in files:
-        conn = initialize_database()
-        insert_csv(file, conn)
+    for csv_file in glob.glob("total_*.csv"):
+        database = initialize_database()
+        insert_csv(csv_file, database)
