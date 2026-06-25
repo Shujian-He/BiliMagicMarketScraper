@@ -11,6 +11,9 @@ __pycache__/
 /want_*.csv
 /sort_*.csv
 
+# Local documentation and planning files.
+/docs/
+
 # Local scratch files that are not part of the application.
 /a.py
 /db_debug.py
