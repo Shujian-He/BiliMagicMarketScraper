@@ -1,6 +1,8 @@
 """Core crawler for Bilibili Magic Market."""
 
+import argparse
 import csv
+import sys
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
@@ -9,8 +11,16 @@ from threading import Event
 
 import requests
 
-from db import insert_products
-from tools import check_and_sleep, load_cookie, random_sleep, send_request, write_checkpoint
+from db import initialize_database, insert_products
+from tools import (
+    RequestError,
+    check_and_sleep,
+    load_checkpoint,
+    load_cookie,
+    random_sleep,
+    send_request,
+    write_checkpoint,
+)
 
 MARKET_URL = "https://mall.bilibili.com/mall-magic-c/internet/c2c/v2/list"
 USER_AGENT = (
@@ -18,6 +28,18 @@ USER_AGENT = (
     "AppleWebKit/619.2.8.10.7 (KHTML, like Gecko) Mobile/22B83 "
     "BiliApp/81900100 os/ios model/iPhone 14 Pro"
 )
+VALID_PRICES = (
+    "0-2000",
+    "2000-3000",
+    "3000-5000",
+    "5000-10000",
+    "10000-20000",
+    "20000-0",
+)
+VALID_DISCOUNTS = ("0-30", "30-50", "50-70", "70-100")
+VALID_CATEGORIES = ("2312", "2066", "2331", "2273", "fudai_cate_id", "")
+DEFAULT_PRICES = ("10000-20000", "20000-0")
+DEFAULT_DISCOUNTS = VALID_DISCOUNTS
 
 
 class ScraperError(RuntimeError):
@@ -252,3 +274,94 @@ def crawl(
     finally:
         if owns_session:
             session.close()
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(description="Scrape Bilibili Magic Market")
+    parser.add_argument(
+        "-w",
+        "--want",
+        nargs="+",
+        default=["初音未来"],
+        help="One or more wanted item names (default: 初音未来)",
+    )
+    parser.add_argument(
+        "-p",
+        "--price",
+        nargs="+",
+        default=list(DEFAULT_PRICES),
+        help="One or more supported price ranges in cents",
+    )
+    parser.add_argument(
+        "-d",
+        "--discount",
+        nargs="+",
+        default=list(DEFAULT_DISCOUNTS),
+        help="One or more supported discount ranges",
+    )
+    parser.add_argument(
+        "-c",
+        "--category",
+        default="",
+        help="Category id (default: all categories)",
+    )
+    parser.add_argument(
+        "--id",
+        action="store_true",
+        help="Continue from the cursor stored in nextId.txt",
+    )
+    return parser
+
+
+def config_from_args(args, log=print):
+    prices = tuple(args.price)
+    if any(value not in VALID_PRICES for value in prices):
+        log("Invalid price filter; using defaults.")
+        prices = DEFAULT_PRICES
+
+    discounts = tuple(args.discount)
+    if any(value not in VALID_DISCOUNTS for value in discounts):
+        log("Invalid discount filter; using defaults.")
+        discounts = DEFAULT_DISCOUNTS
+
+    category = args.category
+    if category not in VALID_CATEGORIES:
+        log("Invalid category filter; using the blank category.")
+        category = ""
+
+    return ScrapeConfig(
+        want_list=tuple(args.want),
+        price_filters=prices,
+        discount_filters=discounts,
+        category_filter=category,
+    )
+
+
+def main(argv=None):
+    args = build_parser().parse_args(argv)
+    config = config_from_args(args)
+    next_id = load_checkpoint() if args.id else None
+
+    print("Want List:", list(config.want_list))
+    print("Price Filter:", list(config.price_filters))
+    print("Discount Filter:", list(config.discount_filters))
+    print("Category Filter:", config.category_filter)
+    print("Read Next ID:", next_id)
+
+    connection = initialize_database()
+    try:
+        status = crawl(connection, config, start_next_id=next_id)
+        print(f"Scraper {status.value}.")
+        return 0
+    except (RequestError, ScraperError) as exc:
+        print(f"Scraper failed: {exc}", file=sys.stderr)
+        return 1
+    except KeyboardInterrupt:
+        print("\nStopped by user. Progress from the last complete page is saved.")
+        return 130
+    finally:
+        connection.close()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

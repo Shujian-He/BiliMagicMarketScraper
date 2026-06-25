@@ -16,6 +16,8 @@ from main import (
     ProductRecord,
     ScrapeConfig,
     ScraperError,
+    build_parser,
+    config_from_args,
     crawl,
     parse_product,
     persist_page,
@@ -271,3 +273,66 @@ def test_crawl_stops_at_page_boundary(tmp_path):
     )
 
     assert result is CrawlStatus.STOPPED
+
+
+def test_invalid_filters_fall_back_to_defaults():
+    messages = []
+    args = build_parser().parse_args(["-p", "bad", "-d", "bad", "-c", "bad"])
+
+    config = config_from_args(args, log=messages.append)
+
+    assert config.price_filters == ("10000-20000", "20000-0")
+    assert config.discount_filters == ("0-30", "30-50", "50-70", "70-100")
+    assert config.category_filter == ""
+    assert len(messages) == 3
+
+
+def test_cli_uses_checkpoint_and_closes_connection(monkeypatch):
+    class FakeConnection:
+        closed = False
+
+        def close(self):
+            self.closed = True
+
+    connection = FakeConnection()
+    captured = {}
+
+    monkeypatch.setattr(main, "initialize_database", lambda: connection)
+    monkeypatch.setattr(main, "load_checkpoint", lambda: "cursor-1")
+
+    def fake_crawl(database, config, *, start_next_id):
+        captured["database"] = database
+        captured["config"] = config
+        captured["next_id"] = start_next_id
+        return CrawlStatus.FINISHED
+
+    monkeypatch.setattr(main, "crawl", fake_crawl)
+
+    exit_code = main.main(["--id"])
+
+    assert exit_code == 0
+    assert captured["database"] is connection
+    assert captured["next_id"] == "cursor-1"
+    assert connection.closed is True
+
+
+def test_cli_returns_nonzero_for_scraper_error(monkeypatch, capsys):
+    class FakeConnection:
+        closed = False
+
+        def close(self):
+            self.closed = True
+
+    connection = FakeConnection()
+    monkeypatch.setattr(main, "initialize_database", lambda: connection)
+
+    def failing_crawl(*_args, **_kwargs):
+        raise ScraperError("broken response")
+
+    monkeypatch.setattr(main, "crawl", failing_crawl)
+
+    exit_code = main.main([])
+
+    assert exit_code == 1
+    assert "broken response" in capsys.readouterr().err
+    assert connection.closed is True
