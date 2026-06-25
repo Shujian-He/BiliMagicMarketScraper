@@ -17,9 +17,10 @@
 ├── main.py          # 主爬虫脚本
 ├── db.py            # 处理 SQLite 数据库操作的函数
 ├── tools.py         # 辅助工具函数
-├── ui.py            # 使用 Streamlit 的用户界面
+├── ui_gradio.py     # Gradio 用户界面
 ├── sort_total.sh    # 用于排序 CSV 文件的 Shell 脚本
-├── main.sh          # 封装主爬虫脚本的 Shell 脚本（适合 Shell 爱好者）
+├── main.sh          # 主爬虫脚本的 Shell 入口
+├── requirements.txt # 运行依赖
 ├── cookies.txt      # 存放B站账户 Cookies 的文本文件
 ├── nextId.txt       # 存放 nextId 的文本文件，以防脚本中断（运行爬虫后生成，通常为空）
 ├── bilidata.db      # SQLite 数据库（运行爬虫后自动生成）
@@ -37,7 +38,7 @@
 
 ### 2. 安装依赖
    ```bash
-   pip3 install requests
+   pip3 install -r requirements.txt
    ```
 
 ### 3. 设置 Cookies
@@ -78,7 +79,7 @@ sh main.sh -w <商品名称> -p <价格范围> -d <折扣范围> -c <类别>
   - `30-50`: 3至5折
   - `50-70`: 5至7折
   - `70-100`: 7折以上
-- `-c, --category`：***一个***商品类别。*（默认：`2312`）*
+- `-c, --category`：***一个***商品类别。*（默认：空，即全部类别）*
   - `2312`：手办
   - `2066`：模型
   - `2331`：周边
@@ -104,6 +105,13 @@ sh main.sh -w fufu -p 10000-20000 -c 2331
 
 爬取完成后程序会自动停止，或者你可以按 `Ctrl+C` 手动停止。
 
+### 请求失败与重试
+
+- 网络超时、连接错误、HTTP 429 和 HTTP 5xx 会进行有限次数的自动重试。
+- HTTP 429 会优先遵循服务器返回的 `Retry-After`。
+- 重试次数耗尽、响应格式错误或游标不再前进时，程序会显示错误并退出，不会无限重复同一页。
+- checkpoint 只会在一整页成功写入 CSV 和 SQLite 后更新。
+
 ### 万一发生中断:
 
 当程序意外或被手动停止，又希望继续搜索时，只需运行：
@@ -124,7 +132,7 @@ sh main.sh <之前的参数> --id
 python3 main.py -w 初音未来 孤独摇滚 -p 5000-10000 10000-20000 20000-0 -d 50-70 70-100 --id
 ```
 
-程序将在中断的地方继续爬取，完美避免了重复搜索。
+程序会从最后一页成功保存的 checkpoint 继续爬取。
 
 
 ## 关于数据
@@ -185,21 +193,15 @@ https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleB
 ```
 
 
-## 用户界面（测试版）
+## Gradio 用户界面
 
-本爬虫脚本附带一个使用 [`Streamlit`](https://streamlit.io/) 开发的用户界面。你可以按照下方的步骤使用。
-
-### 1. 安装依赖
+安装 `requirements.txt` 中的依赖后运行：
 
 ```sh
-pip3 install streamlit streamlit-tags
+python3 ui_gradio.py
 ```
 
-### 2. 运行
-
-```sh
-streamlit run ui.py
-```
+点击 **Stop scraping** 后，程序会等待当前 HTTP 请求或当前页处理完成，再安全停止。界面运行期间不会强行中断正在执行的 SQLite 事务。
 
 
 ## 许可证

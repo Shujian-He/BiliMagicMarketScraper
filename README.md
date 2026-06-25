@@ -18,9 +18,10 @@
 ├── main.py          # The main scraper script
 ├── db.py            # Functions handle SQLite database operations
 ├── tools.py         # Additional helper functions
-├── ui.py            # User Interface using Streamlit
+├── ui_gradio.py     # Gradio user interface
 ├── sort_total.sh    # Shell script for sorting CSV files
-├── main.sh          # Shell script warpping main script (for shell lovers)
+├── main.sh          # Shell entry point for the main scraper
+├── requirements.txt # Runtime dependencies
 ├── cookies.txt      # Text file to put cookies from Bilibili
 ├── nextId.txt       # Text file to store nextId in case of interruption. (created upon running the scraper, normally empty)
 ├── bilidata.db      # SQLite database (created upon running the scraper)
@@ -38,7 +39,7 @@
 
 ### 2. Install dependencies
    ```sh
-   pip3 install requests
+   pip3 install -r requirements.txt
    ```
 
 ### 3. Set Up Your Cookies
@@ -106,6 +107,13 @@ This will generate 2 CSV files like `total_*.csv` and `want_*.csv`, while the da
 
 It will stop after getting all items, or you can stop it manually by pressing `control+c`.
 
+### Request failures and retries
+
+- Network timeouts, connection errors, HTTP 429, and HTTP 5xx responses are retried a limited number of times.
+- HTTP 429 prefers the server's `Retry-After` value.
+- Exhausted retries, malformed responses, and stalled cursors exit with a clear error instead of repeating the same page forever.
+- The checkpoint is updated only after a complete page is written successfully to CSV and SQLite.
+
 ### In case of interruption
 
 It happens sometimes when the script was stopped accidently or intentionally but you whatever want to continue searching. During this kind of situation you can simply run:
@@ -126,7 +134,7 @@ For example:
 python3 main.py -w 初音未来 孤独摇滚 -p 5000-10000 10000-20000 20000-0 -d 50-70 70-100 --id
 ```
 
-It will continue searching from where you stopped, perfectly avoid repeated search.
+It continues from the last successfully saved page checkpoint.
 
 
 ## About Data
@@ -187,21 +195,15 @@ https://mall.bilibili.com/neul-next/index.html?page=magic-market_detail&noTitleB
 ```
 
 
-## User Interface (Beta)
+## Gradio User Interface
 
-The scraper comes with a simple user interface implemented using [`Streamlit`](https://streamlit.io/). Follow instructions below to use.
-
-### 1. Install dependencies
+After installing `requirements.txt`, run:
 
 ```sh
-pip3 install streamlit streamlit-tags
+python3 ui_gradio.py
 ```
 
-### 2. Run
-
-```sh
-streamlit run ui.py
-```
+After clicking **Stop scraping**, the worker stops safely after the current HTTP request or page finishes. It does not terminate an active SQLite transaction halfway through.
 
 
 ## License
