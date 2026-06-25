@@ -209,6 +209,20 @@ def test_write_checkpoint_uses_os_replace(tmp_path, monkeypatch):
     assert tools.os.path.dirname(src) == str(tmp_path)
 
 
+def test_write_checkpoint_removes_temporary_file_when_interrupted(tmp_path, monkeypatch):
+    checkpoint = tmp_path / "nextId.txt"
+
+    def interrupted_replace(_source, _destination):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(tools.os, "replace", interrupted_replace)
+
+    with pytest.raises(KeyboardInterrupt):
+        write_checkpoint("abc123", checkpoint)
+
+    assert list(tmp_path.iterdir()) == []
+
+
 def test_wait_or_stop_uses_sleep_without_event():
     sleeps = []
 

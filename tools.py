@@ -139,7 +139,7 @@ def write_checkpoint(next_id, path="nextId.txt"):
         with os.fdopen(fd, "w", encoding="utf-8") as file:
             file.write("" if next_id is None else str(next_id))
         os.replace(temp_path, path_str)
-    except Exception:  # noqa: BLE001
+    except BaseException:
         try:
             os.unlink(temp_path)
         except FileNotFoundError:

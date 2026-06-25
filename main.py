@@ -2,6 +2,7 @@
 
 import argparse
 import csv
+import sqlite3
 import sys
 from dataclasses import dataclass
 from datetime import datetime
@@ -165,12 +166,14 @@ def persist_page(connection, records, want_list, paths):
             total_file.flush()
             wanted_file.flush()
             connection.commit()
-        except Exception:
-            connection.rollback()
-            total_file.seek(total_position)
-            total_file.truncate()
-            wanted_file.seek(wanted_position)
-            wanted_file.truncate()
+        except BaseException:
+            try:
+                connection.rollback()
+            finally:
+                total_file.seek(total_position)
+                total_file.truncate()
+                wanted_file.seek(wanted_position)
+                wanted_file.truncate()
             raise
 
 
@@ -340,27 +343,28 @@ def config_from_args(args, log=print):
 def main(argv=None):
     args = build_parser().parse_args(argv)
     config = config_from_args(args)
-    next_id = load_checkpoint() if args.id else None
-
-    print("Want List:", list(config.want_list))
-    print("Price Filter:", list(config.price_filters))
-    print("Discount Filter:", list(config.discount_filters))
-    print("Category Filter:", config.category_filter)
-    print("Read Next ID:", next_id)
-
-    connection = initialize_database()
+    connection = None
     try:
+        next_id = load_checkpoint() if args.id else None
+        print("Want List:", list(config.want_list))
+        print("Price Filter:", list(config.price_filters))
+        print("Discount Filter:", list(config.discount_filters))
+        print("Category Filter:", config.category_filter)
+        print("Read Next ID:", next_id)
+
+        connection = initialize_database()
         status = crawl(connection, config, start_next_id=next_id)
         print(f"Scraper {status.value}.")
         return 0
-    except (RequestError, ScraperError) as exc:
+    except (RequestError, ScraperError, OSError, sqlite3.Error) as exc:
         print(f"Scraper failed: {exc}", file=sys.stderr)
         return 1
     except KeyboardInterrupt:
         print("\nStopped by user. Progress from the last complete page is saved.")
         return 130
     finally:
-        connection.close()
+        if connection is not None:
+            connection.close()
 
 
 if __name__ == "__main__":

@@ -178,6 +178,29 @@ def test_persist_page_rolls_back_files_and_database(tmp_path, monkeypatch):
     assert connection.rollbacks == 1
 
 
+def test_persist_page_rolls_back_when_commit_is_interrupted(tmp_path, monkeypatch):
+    connection = CountingConnection()
+    paths = OutputPaths(
+        total=tmp_path / "total.csv",
+        wanted=tmp_path / "want.csv",
+        checkpoint=tmp_path / "nextId.txt",
+    )
+    record = ProductRecord("time", "Miku", "42", 5000, 10000, 0.5)
+
+    def interrupted_commit():
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(connection, "commit", interrupted_commit)
+
+    with pytest.raises(KeyboardInterrupt):
+        persist_page(connection, [record], ["Miku"], paths)
+
+    assert paths.total.read_text(encoding="utf-8") == ""
+    assert paths.wanted.read_text(encoding="utf-8") == ""
+    assert connection.execute("SELECT COUNT(*) FROM products").fetchone()[0] == 0
+    assert connection.rollbacks == 1
+
+
 def test_crawl_finishes_and_clears_checkpoint(tmp_path):
     paths = OutputPaths.for_run(tmp_path, "run")
     paths.checkpoint.write_text("old", encoding="utf-8")
@@ -336,3 +359,15 @@ def test_cli_returns_nonzero_for_scraper_error(monkeypatch, capsys):
     assert exit_code == 1
     assert "broken response" in capsys.readouterr().err
     assert connection.closed is True
+
+
+def test_cli_returns_nonzero_for_checkpoint_io_error(monkeypatch, capsys):
+    def failing_checkpoint():
+        raise OSError("checkpoint unavailable")
+
+    monkeypatch.setattr(main, "load_checkpoint", failing_checkpoint)
+
+    exit_code = main.main(["--id"])
+
+    assert exit_code == 1
+    assert "checkpoint unavailable" in capsys.readouterr().err
