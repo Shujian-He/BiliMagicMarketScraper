@@ -51,7 +51,7 @@ def send_request(
     headers,
     payload,
     *,
-    max_attempts=3,
+    max_attempts=100,
     timeout=(5, 15),
     sleep=time.sleep,
     jitter=random.uniform,
