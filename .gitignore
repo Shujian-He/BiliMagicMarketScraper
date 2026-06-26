@@ -14,6 +14,11 @@ __pycache__/
 # Local documentation and planning files.
 /docs/
 
+# Local tests and test scripts.
+/tests/
+/test_*.py
+/*_test.py
+
 # Local scratch files that are not part of the application.
 /a.py
 /db_debug.py
