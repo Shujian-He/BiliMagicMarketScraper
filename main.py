@@ -260,8 +260,8 @@ def crawl(
                             datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
                         )
                     )
-                except ValueError as exc:
-                    log(f"Skipping item: {exc}")
+                except ValueError:
+                    pass
 
             persist_page(connection, records, config.want_list, paths)
             write_checkpoint(next_id, paths.checkpoint)
